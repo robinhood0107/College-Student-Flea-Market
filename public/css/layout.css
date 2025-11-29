@@ -1,0 +1,314 @@
+/**
+ * layout.css - 레이아웃 관련 스타일
+ * 
+ * 역할:
+ * - 전역 레이아웃 구조 스타일 정의
+ * - 헤더, 푸터, 메인 콘텐츠 영역 스타일
+ * - 네비게이션, 검색바 등 전역 UI 요소
+ * 
+ * 사용 페이지: 모든 페이지 (헤더/푸터가 있는 모든 페이지)
+ * 
+ * 주요 레이아웃 요소:
+ * - 헤더: header, .header-container, .header-logo, .header-search, .header-buttons
+ * - 검색바: .search-form, .search-input-wrapper, .search-input
+ * - 푸터: footer, .footer-container, .footer-links
+ * - 다크모드 토글: .header-dark-toggle, .dark-mode-icon-light, .dark-mode-icon-dark
+ * 
+ * 주의사항:
+ * - 헤더는 sticky로 고정되어 있음 (position: sticky; top: 0;)
+ * - 다크모드 지원 (.dark 클래스에 따른 스타일 변경)
+ * - 반응형 디자인 지원 (미디어 쿼리 포함)
+ */
+
+/* 헤더 스타일 */
+header {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border-main);
+  background-color: var(--color-bg-header);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+@media (min-width: 640px) {
+  header {
+    padding: var(--spacing-3) var(--spacing-10);
+  }
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--color-text-main);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--transition-base);
+}
+
+.header-logo:hover {
+  opacity: 0.8;
+}
+
+.header-logo-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+@media (min-width: 640px) {
+  .header-logo-section {
+    gap: var(--spacing-8);
+  }
+}
+
+.header-dark-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  border: 1px solid var(--color-border-main);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  padding: 0;
+}
+
+.header-dark-toggle:hover {
+  background-color: var(--color-bg-slate-100);
+}
+
+.dark .header-dark-toggle:hover {
+  background-color: var(--color-bg-slate-800);
+}
+
+.header-dark-toggle .material-symbols-outlined {
+  font-size: var(--font-size-lg);
+}
+
+.dark .dark-mode-icon-light {
+  display: none !important;
+}
+
+.dark .dark-mode-icon-dark {
+  display: inline-block !important;
+}
+
+:not(.dark) .dark-mode-icon-light {
+  display: inline-block !important;
+}
+
+:not(.dark) .dark-mode-icon-dark {
+  display: none !important;
+}
+
+.header-logo-icon {
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary);
+}
+
+.header-logo-text {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--color-text-main);
+}
+
+@media (max-width: 639px) {
+  .header-logo-text {
+    display: none;
+  }
+}
+
+/* 검색바 */
+.header-search {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 0 var(--spacing-4);
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 28rem; /* max-w-md */
+}
+
+.search-input-wrapper {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  align-items: stretch;
+  border-radius: var(--radius-md);
+  height: 2.5rem;
+}
+
+.search-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-sub);
+  padding-left: var(--spacing-3);
+  padding-right: var(--spacing-2);
+}
+
+.search-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  resize: none;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  color: var(--color-text-main);
+  padding: 0 var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  border: 1px solid var(--color-border-main);
+  background-color: var(--color-bg-white);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-sub);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(19, 146, 236, 0.1);
+}
+
+/* 헤더 버튼 그룹 */
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.header-button {
+  display: flex;
+  min-width: 70px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  height: 2.5rem;
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  transition: background-color var(--transition-base);
+}
+
+@media (min-width: 640px) {
+  .header-button {
+    min-width: 84px;
+    padding: 0 var(--spacing-4);
+  }
+}
+
+.header-button-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.header-button-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.header-button-secondary {
+  background-color: #e7eef3;
+  color: var(--color-text-main);
+}
+
+.dark .header-button-secondary {
+  background-color: var(--color-bg-slate-800);
+}
+
+.header-button-secondary:hover {
+  background-color: var(--color-bg-slate-200);
+}
+
+.dark .header-button-secondary:hover {
+  background-color: var(--color-bg-slate-700);
+}
+
+/* 메인 콘텐츠 */
+main {
+  flex: 1;
+  padding: var(--spacing-5) var(--spacing-4);
+}
+
+@media (min-width: 640px) {
+  main {
+    padding: var(--spacing-8) var(--spacing-4);
+  }
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: var(--spacing-5) var(--spacing-4);
+}
+
+@media (min-width: 640px) {
+  .main-content {
+    padding: var(--spacing-8) var(--spacing-4);
+  }
+}
+
+/* 페이지 헤더 */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  align-items: center;
+}
+
+.page-header-content {
+  display: flex;
+  min-width: 18rem;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+/* 정렬 섹션 */
+.sort-section {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 푸터 */
+footer {
+  margin-top: auto;
+  padding: var(--spacing-4);
+  border-top: 1px solid var(--color-border-main);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.dark footer {
+  background-color: rgba(16, 26, 34, 0.8);
+}
+

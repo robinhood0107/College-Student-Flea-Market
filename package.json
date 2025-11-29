@@ -4,8 +4,9 @@
   "description": "Node.js와 MySQL을 사용한 대학생 중고거래 플랫폼",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon test-server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "nodemon test-server.js"
   },
   "author": "Team 11",
   "contributors": [

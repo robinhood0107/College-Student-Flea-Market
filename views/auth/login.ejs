@@ -8,54 +8,111 @@
   <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
     <div class="layout-container flex h-full grow flex-col">
       <!-- 메인 콘텐츠 -->
-      <main class="flex flex-1 items-center justify-center py-10 px-4">
-        <div class="flex w-full max-w-md flex-col items-center rounded-xl bg-white dark:bg-background-dark dark:border dark:border-gray-700 shadow-md">
-          <div class="w-full p-8 md:p-10">
-            <!-- 로그인 폼 제목 -->
-            <h1 class="text-text-light dark:text-text-dark text-center text-3xl font-bold leading-tight tracking-tighter pb-6">로그인</h1>
-            <form class="flex flex-col gap-4" action="/auth/login" method="POST">
-              <div class="flex flex-col gap-4">
-                <!-- 이메일 입력 -->
-                <label class="flex flex-col">
-                  <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">이메일</p>
-                  <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark bg-background-light dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary h-14 placeholder:text-gray-400 dark:placeholder-gray-500 p-[15px] text-base font-normal leading-normal" placeholder="이메일 주소를 입력하세요" type="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required/>
-                </label>
-                <!-- 비밀번호 입력 -->
-                <label class="flex flex-col">
-                  <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">비밀번호</p>
-                  <div class="relative flex w-full flex-1 items-stretch">
-                    <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark bg-background-light dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-primary h-14 placeholder:text-gray-400 dark:placeholder-gray-500 p-[15px] pr-12 text-base font-normal leading-normal" placeholder="비밀번호를 입력하세요" type="password" name="password" required/>
-                    <!-- 비밀번호 표시/숨김 버튼 -->
-                    <button class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 dark:text-gray-400" type="button">
-                      <span class="material-symbols-outlined">visibility_off</span>
-                    </button>
-                  </div>
-                </label>
+      <main class="auth-container">
+        <div class="auth-slider-container">
+          <!-- 로그인 카드 -->
+          <div class="auth-card auth-card-login">
+            <div class="auth-card-content">
+              <!-- 로그인 폼 제목 -->
+              <h1 class="auth-title">로그인</h1>
+              <form class="auth-form" action="/auth/login" method="POST">
+                <div class="auth-form-group">
+                  <!-- 이메일 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">이메일</p>
+                    <input class="auth-input" placeholder="이메일 주소를 입력하세요" type="email" name="email" value="<%= typeof email !== 'undefined' ? email : '' %>" required/>
+                  </label>
+                  <!-- 비밀번호 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">비밀번호</p>
+                    <div class="auth-input-wrapper">
+                      <input class="auth-input auth-input-password" placeholder="비밀번호를 입력하세요" type="password" name="password" required/>
+                      <!-- 비밀번호 표시/숨김 버튼 -->
+                      <button class="password-toggle-button auth-password-toggle" type="button">
+                        <span class="material-symbols-outlined">visibility_off</span>
+                      </button>
+                    </div>
+                  </label>
+                </div>
+                <!-- 에러 메시지 -->
+                <% if (typeof error !== 'undefined' && error) { %>
+                <div class="auth-error">
+                  <p class="auth-error-message"><%= error %></p>
+                </div>
+                <% } else { %>
+                <div class="auth-error">
+                  <p class="auth-error-message"></p>
+                </div>
+                <% } %>
+                <!-- 로그인 버튼 -->
+                <button class="auth-submit-button" type="submit">로그인</button>
+              </form>
+              <!-- 회원가입 링크 -->
+              <div class="auth-link-section">
+                <p class="auth-link-text">
+                  아직 회원이 아니신가요? <a class="auth-link" href="#" id="show-join-form">회원가입</a>
+                </p>
               </div>
-              <!-- 에러 메시지 -->
-              <% if (typeof error !== 'undefined' && error) { %>
-              <div class="pt-2">
-                <p class="text-error text-sm font-normal leading-normal h-5"><%= error %></p>
-              </div>
-              <% } else { %>
-              <div class="pt-2">
-                <p class="text-error text-sm font-normal leading-normal h-5"></p>
-              </div>
-              <% } %>
-              <!-- 로그인 버튼 -->
-              <button class="flex w-full items-center justify-center rounded-lg bg-primary h-14 px-6 text-base font-bold text-white shadow-sm transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 mt-4" type="submit">로그인</button>
-            </form>
-            <!-- 회원가입 링크 -->
-            <div class="mt-6 text-center">
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                아직 회원이 아니신가요? <a class="font-medium text-primary hover:underline" href="/auth/join">회원가입</a>
-              </p>
+            </div>
+          </div>
+          
+          <!-- 회원가입 카드 -->
+          <div class="auth-card auth-card-join">
+            <div class="auth-card-content">
+              <!-- 회원가입 폼 제목 -->
+              <h1 class="auth-title">회원가입</h1>
+              <form class="auth-form" id="join-form" action="/auth/join" method="POST">
+                <div class="auth-form-group">
+                  <!-- 이름 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">이름</p>
+                    <input class="auth-input" placeholder="이름을 입력하세요" type="text" name="name" required/>
+                  </label>
+                  <!-- 이메일 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">이메일</p>
+                    <input class="auth-input" placeholder="이메일 주소를 입력하세요" type="email" name="email" required/>
+                  </label>
+                  <!-- 비밀번호 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">비밀번호</p>
+                    <div class="auth-input-wrapper">
+                      <input class="auth-input auth-input-password" placeholder="비밀번호를 입력하세요" type="password" name="password" required/>
+                      <!-- 비밀번호 표시/숨김 버튼 -->
+                      <button class="password-toggle-button auth-password-toggle" type="button">
+                        <span class="material-symbols-outlined">visibility_off</span>
+                      </button>
+                    </div>
+                  </label>
+                  <!-- 비밀번호 확인 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">비밀번호 확인</p>
+                    <div class="auth-input-wrapper">
+                      <input class="auth-input auth-input-password" placeholder="비밀번호를 다시 입력하세요" type="password" name="passwordConfirm" required/>
+                      <!-- 비밀번호 표시/숨김 버튼 -->
+                      <button class="password-toggle-button auth-password-toggle" type="button">
+                        <span class="material-symbols-outlined">visibility_off</span>
+                      </button>
+                    </div>
+                  </label>
+                </div>
+                <!-- 에러 메시지 -->
+                <div class="auth-error">
+                  <p class="auth-error-message" id="join-error-message"></p>
+                </div>
+                <!-- 완료/취소 버튼 -->
+                <div class="auth-form-actions">
+                  <button type="button" class="auth-cancel-button" id="cancel-join-form">취소</button>
+                  <button type="submit" class="auth-submit-button">완료</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </main>
     </div>
   </div>
+  <!-- 인증 관련 JavaScript -->
+  <script src="/js/auth.js"></script>
 </body>
 </html>
-
