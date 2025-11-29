@@ -1,0 +1,37 @@
+{
+  "name": "College-Student-Flea-Market",
+  "version": "1.0.0",
+  "description": "Node.js와 MySQL을 사용한 대학생 중고거래 플랫폼",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon test-server.js"
+  },
+  "author": "Team 11",
+  "contributors": [
+    {
+      "name": "PARK JONGJIN",
+      "email": "pjj4678@gmail.com"
+    },
+    {
+      "name": "SEO GANGJAE"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
+    "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
+    "multer": "1.4.5-lts.1",
+    "mysql2": "^3.6.5",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
