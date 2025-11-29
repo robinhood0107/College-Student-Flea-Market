@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="light" lang="ko">
+<head>
+  <%- include('../partials/head') %>
+  <title><%= typeof product !== 'undefined' ? product.title : '상품 상세' %> | Campus flea Market</title>
+</head>
+<body class="font-display bg-main text-gray-800 dark:text-gray-200">
+  <div class="relative flex h-auto min-h-screen w-full flex-col">
+    <%- include('../partials/header') %>
+    
+    <!-- 메인 콘텐츠 -->
+    <main class="container mx-auto flex-1 px-4 py-8">
+      <div class="mx-auto max-w-4xl">
+        <!-- 브레드크럼 -->
+        <div class="mb-6 flex flex-wrap items-center gap-2">
+          <a class="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary" href="/">Home</a>
+          <span class="text-sm text-gray-400 dark:text-gray-500">/</span>
+          <a class="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary" href="/product/list"><%= typeof product !== 'undefined' ? product.category : 'Electronics' %></a>
+          <span class="text-sm text-gray-400 dark:text-gray-500">/</span>
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-200"><%= typeof product !== 'undefined' ? product.title : '상품' %></span>
+        </div>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+          <!-- 상품 이미지 갤러리 -->
+          <div class="flex flex-col gap-4">
+            <div class="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
+              <!-- 대표 이미지 -->
+              <img alt="<%= typeof product !== 'undefined' ? product.title : '상품 이미지' %>" class="h-full w-full object-cover" src="<%= typeof product !== 'undefined' && product.main_image ? product.main_image : '/uploads/default.jpg' %>"/>
+              <!-- 이미지 인디케이터 -->
+              <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 justify-center gap-2">
+                <% if (typeof product !== 'undefined' && product.images && product.images.length > 0) { %>
+                  <% product.images.forEach((img, index) => { %>
+                  <div class="h-2 w-2 rounded-full <%= index === 0 ? 'bg-white' : 'bg-white/50' %>"></div>
+                  <% }); %>
+                <% } else { %>
+                  <div class="h-2 w-2 rounded-full bg-white"></div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <!-- 상품 정보 -->
+          <div class="flex flex-col">
+            <!-- 판매자 프로필 -->
+            <div class="flex-between border-b border-gray-200 pb-4 dark:border-gray-700">
+              <div class="flex items-center gap-4">
+                <!-- 판매자 프로필 이미지 -->
+                <div class="h-12 w-12 rounded-full bg-cover bg-center" style='background-image: url("<%= typeof product !== 'undefined' && product.seller && product.seller.profile_image ? product.seller.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                <!-- 판매자 정보 -->
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-white"><%= typeof product !== 'undefined' && product.seller ? product.seller.name : '판매자' %></p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400"><%= typeof product !== 'undefined' && product.seller && product.seller.is_verified ? 'Verified University Student' : 'University Student' %></p>
+                </div>
+              </div>
+              <!-- 수정/삭제 버튼 -->
+              <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller && user.id === product.seller.id) { %>
+              <div class="flex gap-2">
+                <a href="/product/<%= product.id %>/edit" class="rounded-lg px-3 py-1.5 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">수정</a>
+                <button class="rounded-lg px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" onclick="deleteProduct(<%= product.id %>)">삭제</button>
+              </div>
+              <% } %>
+            </div>
+            <!-- 상품 상태 선택 -->
+            <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller && user.id === product.seller.id) { %>
+            <div class="mt-4 flex flex-col gap-4 border-b border-gray-200 pb-6 dark:border-gray-700">
+              <form action="/product/<%= product.id %>/status" method="POST" class="flex h-10 w-full items-center justify-center rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
+                <label class="flex h-full flex-1 cursor-pointer items-center justify-center rounded-md px-2 text-sm font-medium text-gray-500 has-[:checked]:bg-white has-[:checked]:text-primary has-[:checked]:shadow-sm dark:text-gray-400 dark:has-[:checked]:bg-gray-700 dark:has-[:checked]:text-white">
+                  <span class="truncate">판매중</span>
+                  <input <%= product.status === 'For Sale' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="For Sale" onchange="this.form.submit()"/>
+                </label>
+                <label class="flex h-full flex-1 cursor-pointer items-center justify-center rounded-md px-2 text-sm font-medium text-gray-500 has-[:checked]:bg-white has-[:checked]:text-primary has-[:checked]:shadow-sm dark:text-gray-400 dark:has-[:checked]:bg-gray-700 dark:has-[:checked]:text-white">
+                  <span class="truncate">예약중</span>
+                  <input <%= product.status === 'Reserved' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="Reserved" onchange="this.form.submit()"/>
+                </label>
+                <label class="flex h-full flex-1 cursor-pointer items-center justify-center rounded-md px-2 text-sm font-medium text-gray-500 has-[:checked]:bg-white has-[:checked]:text-primary has-[:checked]:shadow-sm dark:text-gray-400 dark:has-[:checked]:bg-gray-700 dark:has-[:checked]:text-white">
+                  <span class="truncate">판매완료</span>
+                  <input <%= product.status === 'Sold' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="Sold" onchange="this.form.submit()"/>
+                </label>
+              </form>
+            </div>
+            <% } %>
+            <!-- 상품명 및 가격 -->
+            <div class="mt-6 flex flex-col gap-3">
+              <div>
+                <!-- 상품명 -->
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><%= typeof product !== 'undefined' ? product.title : '상품명' %></h1>
+                <!-- 카테고리 및 등록 시간 -->
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400"><%= typeof product !== 'undefined' ? product.category : '카테고리' %> · <%= typeof product !== 'undefined' && product.created_at ? product.created_at : '방금 전' %></p>
+              </div>
+              <!-- 가격 -->
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">₩<%= typeof product !== 'undefined' ? product.price.toLocaleString() : '0' %></p>
+            </div>
+            <!-- 상품 설명 -->
+            <div class="mt-6">
+              <p class="text-base leading-relaxed text-gray-600 dark:text-gray-300">
+                <%= typeof product !== 'undefined' && product.description ? product.description.replace(/\n/g, '<br/>') : '상품 설명이 없습니다.' %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- 스티키 액션 바 -->
+    <div class="sticky bottom-0 z-10 mt-8 w-full border-t border-gray-200 bg-white/80 dark:border-gray-700 dark:bg-gray-900/80 backdrop-blur-sm">
+      <div class="container mx-auto max-w-4xl px-4 py-3">
+        <div class="flex-between gap-4">
+          <div class="flex items-center gap-4">
+            <!-- 찜하기 버튼 -->
+            <button class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-red-500 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-red-500">
+              <span class="material-symbols-outlined text-2xl">favorite_border</span>
+            </button>
+            <!-- 가격 표시 -->
+            <div class="hidden sm:block">
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">₩<%= typeof product !== 'undefined' ? product.price.toLocaleString() : '0' %></p>
+            </div>
+          </div>
+          <!-- 채팅으로 거래하기 버튼 -->
+          <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller && user.id !== product.seller.id) { %>
+          <a href="/chat/<%= product.id %>" class="flex h-12 flex-1 items-center justify-center overflow-hidden rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-primary/30 sm:flex-none">
+            <span class="truncate">채팅으로 거래하기</span>
+          </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
