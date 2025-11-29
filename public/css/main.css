@@ -1,0 +1,32 @@
+/**
+ * main.css - 메인 CSS 진입점
+ * 
+ * 이 파일은 모든 CSS 파일을 import하는 메인 진입점입니다.
+ * HTML에서는 이 파일만 연결하면 됩니다.
+ * 
+ * 파일 구조:
+ * 1. base.css - CSS Reset 및 CSS Variables (가장 먼저 로드)
+ * 2. common.css - 공통 유틸리티 클래스 (flex, text, bg 등)
+ * 3. layout.css - 레이아웃 관련 스타일 (헤더, 푸터)
+ * 4. components.css - 재사용 가능한 UI 컴포넌트 (버튼, 카드 등)
+ * 5. pages.css - 페이지별 스타일 (auth, product, admin, user)
+ * 
+ * 사용법:
+ * <link rel="stylesheet" href="/css/main.css">
+ */
+
+/* 1. 기본 스타일 (Reset + Variables) - 가장 먼저 로드 */
+@import url('./base.css');
+
+/* 2. 공통 유틸리티 클래스 - 모든 페이지에서 사용 가능한 유틸리티 */
+@import url('./common.css');
+
+/* 3. 레이아웃 스타일 - 헤더, 푸터 등 전역 레이아웃 */
+@import url('./layout.css');
+
+/* 4. 컴포넌트 스타일 - 재사용 가능한 UI 컴포넌트 */
+@import url('./components.css');
+
+/* 5. 페이지별 스타일 - 특정 페이지에서만 사용하는 스타일 */
+@import url('./pages.css');
+

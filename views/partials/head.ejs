@@ -3,48 +3,19 @@
 <% if (typeof title !== 'undefined') { %>
 <title><%= title %></title>
 <% } %>
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+
 <!-- Material Symbols Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+<!-- 커스텀 CSS 파일 -->
+<link rel="stylesheet" href="/css/main.css"/>
+
 <!-- Material Symbols 기본 스타일 -->
 <style>
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
-  
-  .text-main { color: #0d161b; }
-  .dark .text-main { color: rgb(248 250 252); }
-  .text-sub { color: #4c799a; }
-  .dark .text-sub { color: rgb(148 163 184); }
-  .bg-main { background-color: #f6f7f8; }
-  .dark .bg-main { background-color: #101a22; }
-  .bg-header { background-color: white; }
-  .dark .bg-header { background-color: #101a22; }
-  .border-main { border-color: rgb(226 232 240); }
-  .dark .border-main { border-color: rgb(30 41 59); }
-  .flex-center { display: flex; align-items: center; justify-content: center; }
-  .flex-between { display: flex; align-items: center; justify-content: space-between; }
 </style>
-<!-- Tailwind Config -->
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "primary": "#1392ec",
-          "background-light": "#f6f7f8",
-          "background-dark": "#101a22",
-        },
-        fontFamily: {
-          "display": ["Inter", "sans-serif"]
-        },
-        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-      },
-    },
-  }
-</script>
 

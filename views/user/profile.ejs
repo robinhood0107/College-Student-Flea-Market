@@ -13,52 +13,52 @@
       <main class="px-4 py-10 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center">
         <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
           <!-- 프로필 섹션 -->
-          <div class="flex p-4 @container bg-white dark:bg-slate-900/50 rounded-xl shadow-sm">
-            <div class="flex w-full flex-col gap-4 @[520px]:flex-row @[520px]:justify-between @[520px]:items-center">
-              <div class="flex items-center gap-6">
+          <div class="profile-card">
+            <div class="profile-content">
+              <div class="profile-info">
                 <!-- 프로필 이미지 -->
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_image ? user.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_image ? user.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
                 <!-- 프로필 정보 -->
-                <div class="flex flex-col justify-center">
-                  <p class="text-main text-[22px] font-bold leading-tight tracking-[-0.015em]"><%= typeof user !== 'undefined' ? user.name : '사용자' %></p>
-                  <p class="text-sub text-base font-normal leading-normal"><%= typeof user !== 'undefined' ? user.email : 'email@example.com' %></p>
+                <div class="profile-details">
+                  <p class="profile-name"><%= typeof user !== 'undefined' ? user.name : '사용자' %></p>
+                  <p class="profile-email"><%= typeof user !== 'undefined' ? user.email : 'email@example.com' %></p>
                 </div>
               </div>
               <!-- 프로필 수정 버튼 -->
-              <a href="/user/edit" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-100 dark:bg-slate-800 text-main text-sm font-bold leading-normal tracking-[0.015em] w-full max-w-[480px] @[480px]:w-auto hover:bg-slate-200 dark:hover:bg-slate-700">
+              <a href="/user/edit" class="profile-edit-button">
                 <span class="truncate">프로필 수정</span>
               </a>
             </div>
           </div>
           <!-- 탭 및 상품 목록 -->
-          <div class="mt-8">
+          <div class="tab-menu">
             <!-- 탭 메뉴 -->
-            <div class="pb-3">
-              <div class="flex border-b border-main px-4 gap-8">
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary text-main pb-[13px] pt-4" href="/user/profile?tab=sales">
-                  <p class="text-main text-sm font-bold leading-normal tracking-[0.015em]">판매 내역</p>
+            <div class="tab-list">
+              <div class="tab-nav">
+                <a class="tab-item tab-item-active" href="/user/profile?tab=sales">
+                  <p class="tab-text">판매 내역</p>
                 </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-sub pb-[13px] pt-4 hover:border-b-slate-300 dark:hover:border-b-slate-700 hover:text-slate-800 dark:hover:text-slate-200" href="/user/profile?tab=wishlist">
-                  <p class="text-sm font-bold leading-normal tracking-[0.015em]">찜한 목록</p>
+                <a class="tab-item" href="/user/profile?tab=wishlist">
+                  <p class="tab-text">찜한 목록</p>
                 </a>
               </div>
             </div>
             <!-- 상품 그리드 -->
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-4 p-4">
+            <div class="user-product-grid">
               <% if (typeof products !== 'undefined' && products.length > 0) { %>
                 <% products.forEach(product => { %>
-                <a href="/product/<%= product.id %>" class="flex flex-col gap-3 pb-3">
-                  <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
-                  <div>
-                    <p class="text-main text-base font-medium leading-normal"><%= product.title %></p>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal">₩<%= product.price.toLocaleString() %></p>
-                    <p class="<%= product.status === '판매중' ? 'text-primary' : 'text-sub' %> text-sm <%= product.status === '판매중' ? 'font-medium' : 'font-normal' %> leading-normal"><%= product.status %></p>
+                <a href="/product/<%= product.id %>" class="user-product-card">
+                  <div class="user-product-image" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
+                  <div class="user-product-info">
+                    <p class="user-product-title"><%= product.title %></p>
+                    <p class="user-product-price">₩<%= product.price.toLocaleString() %></p>
+                    <p class="user-product-status <%= product.status === '판매중' ? 'user-product-status-active' : 'user-product-status-inactive' %>"><%= product.status %></p>
                   </div>
                 </a>
                 <% }); %>
               <% } else { %>
-                <div class="col-span-full text-center py-12">
-                  <p class="text-sub text-lg">등록된 상품이 없습니다.</p>
+                <div class="empty-state">
+                  <p class="empty-state-text">등록된 상품이 없습니다.</p>
                 </div>
               <% } %>
             </div>

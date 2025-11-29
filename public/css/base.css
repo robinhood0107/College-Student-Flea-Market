@@ -1,0 +1,158 @@
+/**
+ * base.css - 기본 스타일 및 CSS Variables
+ * 
+ * 역할:
+ * - CSS Reset: 브라우저 기본 스타일 초기화
+ * - CSS Variables: 프로젝트 전역에서 사용할 색상, 폰트, 간격 등 정의
+ * - 다크모드 변수: .dark 클래스가 있을 때 사용할 변수 정의
+ * 
+ * 사용 페이지: 모든 페이지 (main.css를 통해 자동 로드)
+ * 
+ * 주요 내용:
+ * - * { margin: 0; padding: 0; box-sizing: border-box; } 등 Reset
+ * - :root에 색상, 폰트, 간격, 둥근 모서리, 그림자, 전환 효과 변수 정의
+ * - .dark 클래스에 다크모드용 변수 오버라이드
+ * 
+ * 주의사항:
+ * - 이 파일은 가장 먼저 로드되어야 함 (main.css에서 첫 번째로 import)
+ * - 다른 CSS 파일에서 var(--변수명) 형태로 사용
+ */
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  font-family: var(--font-display);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+  min-height: 100vh;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* CSS Variables */
+:root {
+  /* 색상 */
+  --color-primary: #1392ec;
+  --color-primary-hover: #0d7bc4;
+  --color-primary-light: #4da8e8;
+  --color-text-main: #0d161b;
+  --color-text-sub: #4c799a;
+  --color-text-light: #0d161b;
+  --color-text-dark: rgb(248, 250, 252);
+  --color-bg-main: #f6f7f8;
+  --color-bg-header: #ffffff;
+  --color-bg-white: #ffffff;
+  --color-bg-slate-50: #f8fafc;
+  --color-bg-slate-100: #f1f5f9;
+  --color-bg-slate-200: #e2e8f0;
+  --color-bg-slate-800: #1e293b;
+  --color-bg-slate-900: #0f172a;
+  --color-border-main: rgb(226, 232, 240);
+  --color-border-slate-300: #cbd5e1;
+  --color-border-slate-700: #334155;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-bg-dark: #101a22;
+  --color-bg-dark-header: #101a22;
+  
+  /* 폰트 */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* 간격 */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  
+  /* 둥근 모서리 */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+  
+  /* 그림자 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* 전환 */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+}
+
+.dark {
+  --color-text-main: rgb(248, 250, 252);
+  --color-text-sub: rgb(148, 163, 184);
+  --color-bg-main: #101a22;
+  --color-bg-header: #101a22;
+  --color-bg-white: #0f172a;
+  --color-border-main: rgb(30, 41, 59);
+}
+

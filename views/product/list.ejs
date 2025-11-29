@@ -10,31 +10,31 @@
       <%- include('../partials/header') %>
       
       <!-- 메인 콘텐츠 -->
-      <main class="flex flex-1 justify-center py-5 sm:py-8 px-4">
-        <div class="layout-content-container flex flex-col w-full max-w-7xl gap-6">
+      <main class="main-content">
+        <div class="layout-content-container">
           <!-- 페이지 제목 -->
-          <div class="flex flex-wrap justify-between gap-4 items-center">
-            <div class="flex min-w-72 flex-col gap-2">
-              <h1 class="text-main text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">Find Your Next Treasure</h1>
-              <p class="text-sub text-base font-normal leading-normal">Browse thousands of items from students on your campus.</p>
+          <div class="page-header">
+            <div class="page-header-content">
+              <h1 class="page-title">Find Your Next Treasure</h1>
+              <p class="page-subtitle">Browse thousands of items from students on your campus.</p>
             </div>
           </div>
           <!-- 카테고리 필터 -->
-          <div class="flex gap-2 sm:gap-3 py-3 overflow-x-auto">
-            <a href="/product/list" class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-white px-4">
-              <p class="text-sm font-medium leading-normal">All</p>
+          <div class="category-filter">
+            <a href="/product/list" class="category-button category-button-active">
+              <p>All</p>
             </a>
             <% const categories = ['Electronics', 'Books', 'Furniture', 'Dorm Essentials', 'Clothing']; %>
             <% categories.forEach(category => { %>
-            <a href="/product/list?category=<%= encodeURIComponent(category) %>" class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-slate-200 dark:bg-slate-800 px-4">
-              <p class="text-main text-sm font-medium leading-normal"><%= category %></p>
+            <a href="/product/list?category=<%= encodeURIComponent(category) %>" class="category-button category-button-inactive">
+              <p><%= category %></p>
             </a>
             <% }); %>
           </div>
           <!-- 정렬 버튼 -->
-          <div class="flex justify-end">
+          <div class="sort-section">
             <div class="relative">
-              <button class="flex h-9 items-center justify-center gap-x-2 rounded-lg bg-slate-200 dark:bg-slate-800 px-4">
+              <button class="sort-btn">
                 <span class="material-symbols-outlined text-lg">sort</span>
                 <p class="text-main text-sm font-medium leading-normal">Latest</p>
                 <span class="material-symbols-outlined text-lg">expand_more</span>
@@ -42,50 +42,60 @@
             </div>
           </div>
           <!-- 상품 그리드 -->
-          <div class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 sm:gap-6">
+          <div class="product-grid">
             <% if (typeof products !== 'undefined' && products.length > 0) { %>
               <% products.forEach(product => { %>
-              <a href="/product/<%= product.id %>" class="flex flex-col gap-3 group">
-                <div class="relative overflow-hidden">
-                  <!-- 상품 이미지 -->
-                  <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl transition-transform duration-300 group-hover:scale-105" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
-                  <!-- 상품 상태 뱃지 -->
-                  <span class="absolute top-2 left-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium px-2.5 py-1 rounded-full"><%= product.condition || 'Good' %></span>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <!-- 상품명 -->
-                    <p class="text-main text-base font-bold leading-normal truncate"><%= product.title %></p>
-                    <% if (product.is_verified) { %>
-                    <!-- 학교인증 뱃지 -->
-                    <span class="flex-shrink-0 flex items-center gap-1 bg-primary/10 text-primary dark:bg-primary/20 dark:text-sky-300 text-xs font-semibold px-2 py-0.5 rounded-full">
-                      <span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">school</span>
-                      <span>학교인증</span>
-                    </span>
-                    <% } %>
+              <div class="product-card" data-product-id="<%= product.id %>">
+                <a href="/product/<%= product.id %>" class="product-card-link">
+                  <div class="product-image-wrapper">
+                    <!-- 상품 이미지 -->
+                    <div class="product-image" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
+                    <!-- 상품 상태 뱃지 -->
+                    <span class="product-status-badge"><%= product.condition || 'Good' %></span>
                   </div>
-                  <!-- 가격 -->
-                  <p class="text-primary dark:text-primary-light text-base font-bold leading-normal mt-1">₩<%= product.price.toLocaleString() %></p>
-                  <div class="flex-between text-sub text-sm font-normal leading-normal mt-1">
-                    <!-- 거래 장소 -->
-                    <span><%= product.location || '장소 미지정' %></span>
-                    <!-- 찜 개수 -->
-                    <div class="flex items-center gap-1">
-                      <span class="material-symbols-outlined !text-base text-red-500" style="font-variation-settings: 'FILL' 1;">favorite</span>
-                      <span><%= product.like_count || 0 %></span>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <!-- 상품명 -->
+                      <p class="product-title"><%= product.title %></p>
+                      <% if (product.is_verified) { %>
+                      <!-- 학교인증 뱃지 -->
+                      <span class="verified-badge">
+                        <span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">school</span>
+                        <span>학교인증</span>
+                      </span>
+                      <% } %>
+                    </div>
+                    <!-- 가격 -->
+                    <p class="product-price">₩<%= product.price.toLocaleString() %></p>
+                    <div class="product-meta">
+                      <!-- 거래 장소 -->
+                      <span><%= product.location || '장소 미지정' %></span>
+                      <!-- 찜 개수 -->
+                      <div class="flex items-center gap-1">
+                        <span class="material-symbols-outlined !text-base text-red-500" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        <span class="like-count"><%= product.like_count || 0 %></span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
+                <!-- 찜하기 버튼 (로그인한 사용자만 표시) -->
+                <% if (typeof user !== 'undefined' && user) { %>
+                <button class="like-button" data-like-product="<%= product.id %>" type="button" aria-label="찜하기">
+                  <span class="material-symbols-outlined">favorite_border</span>
+                </button>
+                <% } %>
+              </div>
               <% }); %>
             <% } else { %>
-              <div class="col-span-full text-center py-12">
-                <p class="text-sub text-lg">등록된 상품이 없습니다.</p>
+              <div class="empty-state">
+                <p class="empty-state-text">등록된 상품이 없습니다.</p>
               </div>
             <% } %>
           </div>
         </div>
       </main>
+    </div>
+      <%- include('../partials/footer') %>
     </div>
   </div>
 </body>
