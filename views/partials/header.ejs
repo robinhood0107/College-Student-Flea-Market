@@ -1,0 +1,54 @@
+<!-- 헤더 -->
+<header class="flex-center whitespace-nowrap border-b border-solid border-main bg-header sticky top-0 z-10">
+  <div class="flex-between px-4 sm:px-10 py-3 w-full max-w-7xl">
+    <div class="flex items-center gap-4 sm:gap-8">
+      <div class="flex items-center gap-2 text-main">
+        <!-- 로고 아이콘 -->
+        <span class="material-symbols-outlined text-2xl text-primary">store</span>
+        <!-- 제목 -->
+        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] hidden sm:block">Campus flea Market</h2>
+      </div>
+    </div>
+    <!-- 검색바 -->
+    <div class="flex flex-1 justify-center px-4">
+      <form class="flex flex-col w-full max-w-md" action="/product/list" method="GET">
+        <label class="flex flex-col w-full">
+          <div class="flex w-full flex-1 items-stretch rounded-lg h-10">
+            <div class="text-sub flex-center pl-3 pr-2">
+              <span class="material-symbols-outlined">search</span>
+            </div>
+            <input 
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-main input-base h-full placeholder:text-sub px-2 text-sm font-normal leading-normal" 
+              placeholder="Search for items..." 
+              name="keyword"
+              value="<%= typeof keyword !== 'undefined' ? keyword : '' %>"
+            />
+          </div>
+        </label>
+      </form>
+    </div>
+    <!-- 로그인 상태에 따른 버튼 분기 -->
+    <% if (user) { %>
+      <!-- 로그인된 경우: 마이페이지, 로그아웃 버튼 -->
+      <div class="flex items-center gap-2">
+        <a href="/user/profile" class="flex min-w-[70px] sm:min-w-[84px] cursor-pointer flex-center overflow-hidden rounded-lg h-10 px-3 sm:px-4 bg-[#e7eef3] dark:bg-slate-800 text-main text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">마이페이지</span>
+        </a>
+        <a href="/auth/logout" class="flex min-w-[70px] sm:min-w-[84px] cursor-pointer flex-center overflow-hidden rounded-lg h-10 px-3 sm:px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">로그아웃</span>
+        </a>
+      </div>
+    <% } else { %>
+      <!-- 로그인 안 된 경우: 회원가입, 로그인 버튼 -->
+      <div class="flex items-center gap-2">
+        <a href="/auth/join" class="flex min-w-[70px] sm:min-w-[84px] cursor-pointer flex-center overflow-hidden rounded-lg h-10 px-3 sm:px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">Sign Up</span>
+        </a>
+        <a href="/auth/login" class="flex min-w-[70px] sm:min-w-[84px] cursor-pointer flex-center overflow-hidden rounded-lg h-10 px-3 sm:px-4 bg-[#e7eef3] dark:bg-slate-800 text-main text-sm font-bold leading-normal tracking-[0.015em]">
+          <span class="truncate">Login</span>
+        </a>
+      </div>
+    <% } %>
+  </div>
+</header>
+
