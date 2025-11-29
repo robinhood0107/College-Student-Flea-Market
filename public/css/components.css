@@ -1,0 +1,419 @@
+/**
+ * components.css - 재사용 가능한 UI 컴포넌트 스타일
+ * 
+ * 역할:
+ * - 여러 페이지에서 재사용되는 UI 컴포넌트의 스타일 정의
+ * - 버튼, 카드, 폼 입력, 뱃지 등 공통 컴포넌트
+ * 
+ * 사용 페이지: 모든 페이지 (컴포넌트를 사용하는 페이지)
+ * 
+ * 주요 컴포넌트:
+ * - 버튼: .btn, .btn-primary, .btn-secondary, .btn-lg, .btn-xl
+ * - 카드: .card, .card-lg
+ * - 타이포그래피: .page-title, .section-title, .subtitle
+ * - 폼 입력: .form-input, .form-label, .form-error (pages.css의 auth-form과 구분)
+ * - 뱃지: .badge, .badge-primary, .badge-success, .badge-error
+ * - 상품 카드: .product-card, .product-image-wrapper, .product-status-badge 등
+ * 
+ * 주의사항:
+ * - 페이지별 특화된 스타일은 pages.css에 정의
+ * - 유틸리티 클래스는 common.css에 정의
+ */
+
+/* 버튼 컴포넌트 */
+.btn {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  transition: all var(--transition-base);
+  min-width: 70px;
+  height: 2.5rem;
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 640px) {
+  .btn {
+    min-width: 84px;
+    padding: 0 var(--spacing-4);
+  }
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: #e7eef3;
+  color: var(--color-text-main);
+}
+
+.dark .btn-secondary {
+  background-color: var(--color-bg-slate-800);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-bg-slate-200);
+}
+
+.dark .btn-secondary:hover {
+  background-color: var(--color-bg-slate-700);
+}
+
+.btn-lg {
+  height: 3rem;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+.btn-xl {
+  height: 3.5rem;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+/* 카드 컴포넌트 */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  border: 1px solid var(--color-border-main);
+  background-color: var(--color-bg-white);
+}
+
+.dark .card {
+  background-color: var(--color-bg-slate-900);
+}
+
+.card-lg {
+  padding: var(--spacing-8);
+}
+
+@media (min-width: 768px) {
+  .card-lg {
+    padding: var(--spacing-10);
+  }
+}
+
+/* 타이포그래피 */
+.page-title {
+  color: var(--color-text-main);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  line-height: 1.25;
+  letter-spacing: -0.033em;
+}
+
+@media (min-width: 640px) {
+  .page-title {
+    font-size: var(--font-size-4xl);
+  }
+}
+
+.page-subtitle {
+  color: var(--color-text-sub);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+}
+
+.section-title {
+  color: var(--color-text-main);
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.dark .section-title {
+  color: #ffffff;
+}
+
+/* 인증 뱃지 */
+.verified-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--spacing-1);
+  background-color: rgba(19, 146, 236, 0.1);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 0.125rem var(--spacing-2);
+  border-radius: var(--radius-full);
+}
+
+.dark .verified-badge {
+  background-color: rgba(19, 146, 236, 0.2);
+  color: #7dd3fc;
+}
+
+/* 카테고리 버튼 (통일된 클래스명) */
+.category-button {
+  display: flex;
+  height: 2.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  border-radius: var(--radius-full);
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  transition: background-color var(--transition-base);
+}
+
+.category-button-active {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.category-button-inactive {
+  background-color: var(--color-bg-slate-200);
+  color: var(--color-text-main);
+}
+
+.dark .category-button-inactive {
+  background-color: var(--color-bg-slate-800);
+}
+
+.category-button-inactive:hover {
+  background-color: var(--color-bg-slate-300);
+}
+
+.dark .category-button-inactive:hover {
+  background-color: var(--color-bg-slate-700);
+}
+
+/* 정렬 버튼 */
+.sort-btn {
+  display: flex;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-slate-200);
+  padding: 0 var(--spacing-4);
+}
+
+.dark .sort-btn {
+  background-color: var(--color-bg-slate-800);
+}
+
+/* 빈 상태 */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--spacing-12) 0;
+}
+
+.empty-state-text {
+  color: var(--color-text-sub);
+  font-size: var(--font-size-lg);
+}
+
+/* 브레드크럼 */
+.breadcrumb {
+  margin-bottom: var(--spacing-6);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.breadcrumb-link {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: #6b7280;
+  transition: color var(--transition-base);
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-primary);
+}
+
+.dark .breadcrumb-link {
+  color: #9ca3af;
+}
+
+.dark .breadcrumb-link:hover {
+  color: var(--color-primary);
+}
+
+.breadcrumb-separator {
+  font-size: var(--font-size-sm);
+  color: #9ca3af;
+}
+
+.dark .breadcrumb-separator {
+  color: #6b7280;
+}
+
+.breadcrumb-current {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.dark .breadcrumb-current {
+  color: #e5e7eb;
+}
+
+/* 폼 컴포넌트 (공통) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.form-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.form-label .required {
+  color: #ef4444;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-slate-300);
+  background-color: var(--color-bg-white);
+  color: var(--color-text-main);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dark .form-input,
+.dark .form-textarea,
+.dark .form-select {
+  border-color: var(--color-border-slate-700);
+  background-color: var(--color-bg-slate-900);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-text-sub);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(19, 146, 236, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  inset: 0;
+  left: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  color: var(--color-text-sub);
+}
+
+.input-with-icon .form-input {
+  padding-left: 2.5rem;
+}
+
+.input-with-suffix {
+  position: relative;
+}
+
+.input-suffix {
+  position: absolute;
+  inset: 0;
+  right: var(--spacing-4);
+  display: flex;
+  align-items: center;
+  color: var(--color-text-sub);
+}
+
+.input-with-suffix .form-input {
+  padding-right: 2.5rem;
+}
+
+.form-error {
+  font-size: var(--font-size-xs);
+  color: #dc2626;
+  margin-top: var(--spacing-1);
+  display: none;
+}
+
+.form-error.show {
+  display: block;
+}
+
+.form-button {
+  display: flex;
+  min-width: 84px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  height: 3rem;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  transition: all var(--transition-base);
+}
+
+.form-button-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.form-button-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.form-button-secondary {
+  background-color: var(--color-bg-slate-200);
+  color: var(--color-text-main);
+}
+
+.dark .form-button-secondary {
+  background-color: var(--color-bg-slate-800);
+}
+
+.form-button-secondary:hover {
+  background-color: var(--color-bg-slate-300);
+}
+
+.dark .form-button-secondary:hover {
+  background-color: var(--color-bg-slate-700);
+}

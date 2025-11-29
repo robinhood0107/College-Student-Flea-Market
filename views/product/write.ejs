@@ -13,10 +13,10 @@
       <main class="px-10 flex flex-1 justify-center py-5">
         <div class="layout-content-container flex flex-col w-full max-w-4xl flex-1 gap-8">
           <!-- 페이지 제목 -->
-          <div class="flex flex-wrap justify-between gap-3 p-4">
-            <div class="flex min-w-72 flex-col gap-3">
-              <p class="text-main text-4xl font-black leading-tight tracking-[-0.033em]">상품 등록</p>
-              <p class="text-sub text-base font-normal leading-normal">판매할 상품의 정보를 정확하게 입력해주세요.</p>
+          <div class="page-header">
+            <div class="page-header-content">
+              <p class="page-title">상품 등록</p>
+              <p class="page-subtitle">판매할 상품의 정보를 정확하게 입력해주세요.</p>
             </div>
           </div>
           <form id="product-form" action="/product/write" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
@@ -26,21 +26,28 @@
               <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal pb-3 pt-1 px-4">최대 10장의 이미지를 업로드할 수 있습니다. 첫 번째 이미지가 대표 이미지로 사용됩니다.</p>
               <!-- 이미지 업로드 영역 -->
               <div class="flex flex-col p-4">
-                <div class="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 px-6 py-14">
+                <div class="upload-dropzone flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 px-6 py-14">
                   <div class="flex max-w-[480px] flex-col items-center gap-2">
                     <p class="text-main text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">드래그 앤 드롭 또는 파일 선택</p>
                     <p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal max-w-[480px] text-center">판매할 상품의 사진을 추가하세요</p>
                   </div>
                   <!-- 파일 선택 버튼 -->
-                  <input type="file" name="images" multiple accept="image/*" id="image-upload" class="hidden" onchange="handleImageUpload(event)"/>
+                  <input type="file" name="images" multiple accept="image/*" id="image-upload" class="hidden"/>
                   <label for="image-upload" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-800 text-main text-sm font-bold leading-normal tracking-[0.015em]">
                     <span class="truncate">파일 선택</span>
                   </label>
                 </div>
               </div>
               <!-- 업로드된 이미지 미리보기 -->
-              <div class="px-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4" id="image-preview">
-                <!-- 이미지 미리보기는 JavaScript로 동적 추가 -->
+              <div class="image-preview-section">
+                <div class="image-preview-header">
+                  <p class="image-preview-count">
+                    <span id="image-count">0</span> / 10
+                  </p>
+                </div>
+                <div class="image-preview-container" id="image-preview">
+                  <!-- 이미지 미리보기는 JavaScript로 동적 추가 -->
+                </div>
               </div>
             </div>
             <div class="w-full border-t border-main my-4"></div>
@@ -76,10 +83,7 @@
                 <!-- 거래 희망 장소 입력 -->
                 <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="location">거래 희망 장소</label>
-                  <div class="relative">
-                    <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-sub">location_on</span>
-                    <input class="form-input w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-10" id="location" name="location" placeholder="예: 서울특별시 강남구" type="text" value="<%= typeof product !== 'undefined' && product ? product.location : '' %>"/>
-                  </div>
+                  <input class="form-input w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500" id="location" name="location" placeholder="예: 서울특별시 강남구" type="text" value="<%= typeof product !== 'undefined' && product ? product.location : '' %>"/>
                 </div>
                 <!-- 상품 설명 입력 -->
                 <div class="flex flex-col gap-2">
@@ -92,14 +96,14 @@
           </div>
         </main>
         <!-- 푸터 -->
-        <footer class="sticky bottom-0 bg-white/80 dark:bg-background-dark/80 backdrop-blur-sm border-t border-main py-4 px-10">
-          <div class="max-w-4xl mx-auto flex justify-end gap-3">
+        <footer class="form-footer">
+          <div class="form-footer-content">
             <!-- 취소 버튼 -->
-            <a href="/product/list" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-slate-200 dark:bg-slate-800 text-main text-base font-bold leading-normal tracking-[0.015em]">
+            <a href="/product/list" class="btn btn-secondary btn-lg">
               <span class="truncate">취소</span>
             </a>
             <!-- 등록하기 버튼 -->
-            <button type="submit" form="product-form" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em]">
+            <button type="submit" form="product-form" class="btn btn-primary btn-lg">
               <span class="truncate">등록하기</span>
             </button>
           </div>
@@ -107,32 +111,12 @@
       </div>
     </div>
   </div>
-  <script>
-    function handleImageUpload(event) {
-      const files = event.target.files;
-      const preview = document.getElementById('image-preview');
-      preview.innerHTML = '';
-      
-      for (let i = 0; i < files.length && i < 10; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-          const div = document.createElement('div');
-          div.className = 'relative group aspect-square';
-          div.innerHTML = `
-            <div class="w-full h-full bg-slate-200 dark:bg-slate-800 rounded-lg bg-cover bg-center" style="background-image: url('${e.target.result}');"></div>
-            <button type="button" class="absolute top-1 right-1 bg-black/50 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity" onclick="this.parentElement.parentElement.remove()">
-              <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
-            </button>
-          `;
-          preview.appendChild(div);
-        };
-        
-        reader.readAsDataURL(file);
-      }
-    }
-  </script>
+      <%- include('../partials/footer') %>
+    </div>
+  </div>
+  
+  <!-- 상품 관련 JavaScript -->
+  <script src="/js/product.js"></script>
 </body>
 </html>
 
