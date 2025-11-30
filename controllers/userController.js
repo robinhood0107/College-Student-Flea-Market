@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Product = require('../models/Product');
 const bcrypt = require('bcryptjs');
 
 const userController = {
@@ -9,10 +10,48 @@ const userController = {
             const showEditForm = req.query.edit === 'true'; // ?edit=true 쿼리 파라미터로 폼 표시
             
             // 현재 로그인한 사용자 정보 가져오기
-            // req.user는 passport.deserializeUser에서 설정됨 (User.findById로 가져온 데이터)
-            // 필드: id, email, nickname, campus, profile_img, isAdmin, created_at
+
+            // 개인 공부용 설명 (중요)
+            // 이 설명을 이해할 수 있어야 함!!
+            // passport.deserializeUser에서 User.findById로 가져온 데이터를 done(null, user)로 반환하면
+            // Passport.js가 자동으로 req.user에 저장함 (app.js의 passport.session() 미들웨어가 처리)
             const user = req.user || null;
 
+            // 사용자 ID가 없으면 로그인 페이지로 리다이렉트
+            if (!user || !user.id) {
+                return res.redirect('/auth/login');
+            }
+
+            let products = [];
+            
+            // 탭에 따라 다른 상품 목록 가져오기
+            if (tab === 'wishlist') {
+                // 찜한 목록: 사용자가 찜한 상품들 <- 이거 model/Product.js에서 미리 구현해둠!!!
+                products = await Product.findLikedByUser(user.id);
+            } else {
+                // 판매 내역: 사용자가 판매한 상품들 <- 이거 model/Product.js에서 미리 구현해둠!!!
+                products = await Product.findBySellerId(user.id);
+            }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+            //여기서 Grid 나중에 라우터로 연결하면서 수정 필요
+            //(미완성)
+
+
+
+
+
 
 
 
@@ -23,26 +62,6 @@ const userController = {
 
 
             
-            // TODO: 사용자의 상품 목록 가져오기 (나중에 구현)
-            const products = [];
-            //미구현 상태!!!!
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             res.render('user/profile', {
                 user: user,
                 products: products,

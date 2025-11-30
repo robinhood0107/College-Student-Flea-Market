@@ -39,10 +39,10 @@
             <!-- 탭 메뉴 -->
             <div class="tab-list">
               <div class="tab-nav">
-                <a class="tab-item tab-item-active" href="/user/profile?tab=sales">
+                <a class="tab-item <%= tab === 'sales' ? 'tab-item-active' : '' %>" href="/user/profile?tab=sales">
                   <p class="tab-text">판매 내역</p>
                 </a>
-                <a class="tab-item" href="/user/profile?tab=wishlist">
+                <a class="tab-item <%= tab === 'wishlist' ? 'tab-item-active' : '' %>" href="/user/profile?tab=wishlist">
                   <p class="tab-text">찜한 목록</p>
                 </a>
               </div>
@@ -52,7 +52,7 @@
               <% if (typeof products !== 'undefined' && products.length > 0) { %>
                 <% products.forEach(product => { %>
                 <a href="/product/<%= product.id %>" class="user-product-card">
-                  <div class="user-product-image" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
+                  <div class="user-product-image" style='background-image: url("<%= product.thumbnail || product.main_image || '/uploads/default.jpg' %>");'></div>
                   <div class="user-product-info">
                     <p class="user-product-title"><%= product.title %></p>
                     <p class="user-product-price">₩<%= product.price.toLocaleString() %></p>
