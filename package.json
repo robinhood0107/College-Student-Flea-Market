@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "nodemon test-server.js"
+    "dev": "nodemon app.js"
   },
   "author": "Team 11",
   "contributors": [

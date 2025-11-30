@@ -46,8 +46,8 @@ const sessionStore = new MySQLStore({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || 'market_db',
   clearExpired: true,
-  checkExpirationInterval: 900000, // 15분
-  expiration: 86400000, // 24시간
+  checkExpirationInterval: 600000, // 10분마다 만료된 세션 정리
+  expiration: 7200000, // 2시간 (일반적인 웹사이트 세션 유지 시간)
 }, db);
 
 app.use(session({
@@ -55,10 +55,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
+  name: 'sessionId', // 기본 'connect.sid' 대신 커스텀 이름 사용
   cookie: {
-    maxAge: 86400000, // 24시간
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' // HTTPS에서만 true
+    maxAge: 7200000, // 2시간 (세션 만료 시간과 동일하게 설정)
+    httpOnly: true, // XSS 공격 방지 (JavaScript로 쿠키 접근 불가)
+    secure: process.env.NODE_ENV === 'production', // HTTPS에서만 전송
+    sameSite: 'strict' // CSRF 공격 방지 (strict: 같은 사이트에서만 전송)
   }
 }));
 
@@ -85,8 +87,10 @@ require('./config/passport')(passport);
 
 
 app.use((req, res, next) => {
-  // res.locals.user는 passport.deserializeUser에서 설정됨
-
+  // 모든 뷰에서 user 변수 사용 가능하도록 설정
+  // req.user는 passport.deserializeUser에서 설정됨
+  res.locals.user = req.user || null;
+  
   //이거 전역변수 처럼 사용된다
   res.locals.currentPath = req.path;
   next();
@@ -94,11 +98,18 @@ app.use((req, res, next) => {
 
 //여기가 라우터 연결 부분
 
+// 인증 미들웨어 (로그인 체크)
+const isAuthenticated = require('./middlewares/isAuthenticated');
+
+// 인증 라우터 (로그인/회원가입은 인증 불필요)
+app.use('/auth', require('./routes/authRoutes'));
+
+// 인증이 필요한 모든 라우트에 미들웨어 적용
+// 로그인하지 않은 사용자는 자동으로 /auth/login으로 리다이렉트됨
+app.use(isAuthenticated);
+
 // 메인 라우터 (홈 페이지)
 app.use('/', require('./routes/index'));
-
-// 인증 라우터
-app.use('/auth', require('./routes/authRoutes'));
 
 // 상품 라우터
 app.use('/product', require('./routes/productRoutes'));
@@ -124,21 +135,18 @@ app.use((req, res, next) => {
   });
 });
 
+// 404 핸들러 (모든 라우트 뒤에 위치)
+app.use((req, res) => {
+  res.status(404).send('404');
+});
+
 // 일반 에러 핸들러
 app.use((err, req, res, next) => {
   // 에러 로깅
   console.error('Error:', err);
   
-  // 환경에 따른 에러 정보 표시 제어로 디버깅용임!!
-  // .env파일에 NODE_ENV=development 또는 NODE_ENV=production 설정
-  const isDevelopment = process.env.NODE_ENV !== 'production';
-  
-  //env따라서 로그 어떻게 표시할지
-  res.status(err.status || 500).render('error', {
-    title: '오류 발생',
-    message: err.message || '서버 오류가 발생했습니다.',
-    error: isDevelopment ? err : {}
-  });
+  // 모든 에러는 404로 표시
+  res.status(404).send('404');
 });
 
 module.exports = app;
@@ -149,13 +157,7 @@ if (require.main === module) {
   const port = process.env.PORT || 3000;
   
   app.listen(port, () => {
-    console.log('\n🚀 서버가 실행되었습니다!');
-    console.log(`📍 http://localhost:${port}`);
-    console.log(`\n📋 사용 가능한 페이지:`);
-    console.log(`   - 홈: http://localhost:${port}/`);
-    console.log(`   - 상품 목록: http://localhost:${port}/product/list`);
-    console.log(`   - 로그인: http://localhost:${port}/auth/login`);
-    console.log(`\n✨ 브라우저에서 위 주소를 열어 확인하세요!\n`);
+    console.log(`서버: http://localhost:${port}`);
   });
   
   process.on('uncaughtException', (err) => {

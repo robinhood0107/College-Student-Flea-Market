@@ -1,0 +1,130 @@
+<!--
+  플로팅 모달 만드는 법(개인 공부)
+
+  모달에 대해서
+  - 사용자 인터페이스에서 현재 페이지 위에 떠있는 팝업 창
+  - 배경을 어둡게 만들고 중앙에 콘텐츠를 표시
+  - 사용자가 모달을 닫기 전까지는 배경과 상호작용 불가
+  
+  [모달 구조 설명]
+  1. .profile-edit-modal (최상위 컨테이너)
+     - position: fixed → 화면에 고정 (스크롤해도 위치 유지)
+     - width: 100%, height: 100% → 전체 화면 덮기
+     - z-index: 1000 → 다른 요소들 위에 표시
+     - display: none → 기본적으로 숨김 (JavaScript로 'flex'로 변경하여 표시)
+     - display: flex + align-items: center + justify-content: center → 중앙 정렬
+  
+  2. .profile-edit-modal-overlay (배경 오버레이)
+     - position: absolute → 부모(.profile-edit-modal) 기준으로 위치
+     - background-color: rgba(0, 0, 0, 0.5) → 반투명 검은색 배경
+     - backdrop-filter: blur(4px) → 배경 블러 효과
+     - 클릭 시 모달 닫기 기능
+  
+  3. .profile-edit-modal-content (모달 콘텐츠 영역)
+     - position: relative → z-index 기준점
+     - z-index: 1001 → 오버레이(1000) 위에 표시
+     - max-width: 500px → 최대 너비 제한
+     - max-height: 90vh → 화면 높이의 90%까지만 (스크롤 가능)
+     - overflow-y: auto → 내용이 많으면 세로 스크롤
+  
+  [사용 방법]
+  1. 모달 열기: JavaScript에서 modal.style.display = 'flex'
+  2. 모달 닫기: JavaScript에서 modal.style.display = 'none'
+  3. 닫기 방법:
+     - X 버튼 클릭 (id="close-edit-modal")
+     - 취소 버튼 클릭 (id="cancel-edit-modal")
+     - 오버레이(배경) 클릭
+     - ESC 키 누르기
+  
+  [주의사항]
+  - 모달은 body 바로 아래에 위치해야 함 (다른 요소 안에 있으면 z-index 문제 발생)
+  - 기본적으로 display: none으로 숨겨져 있음
+  - JavaScript가 로드되어야 모달이 작동함
+-->
+
+
+
+
+
+
+<div id="edit-profile-modal" class="profile-edit-modal" style="display: none;">
+  <!-- 배경 오버레이 (css에 설정해둔 그대로)-->
+  <div class="profile-edit-modal-overlay"></div>
+  <div class="profile-edit-modal-content"><!--여기부터 모달 폼 들어감-->
+    <div class="auth-card">
+      <div class="auth-card-content">
+        <!-- 프로필 수정 폼 제목 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h1 class="auth-title" style="margin: 0;">프로필 수정</h1>
+          <button type="button" id="close-edit-modal" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #666;">&times;</button>
+        </div>
+        <form class="auth-form" id="edit-profile-form" action="/user/edit" method="POST">
+          <div class="auth-form-group">
+            <!-- 이메일 (읽기 전용) -->
+            <label class="auth-label">
+              <p class="auth-label-text">이메일</p>
+              <input class="auth-input" type="email" value="<%= typeof user !== 'undefined' && user.email ? user.email : '' %>" readonly disabled style="background-color: #f5f5f5; cursor: not-allowed;"/>
+              <p style="font-size: 12px; color: #666; margin-top: 5px;">이메일은 변경할 수 없습니다.</p>
+            </label>
+            
+            <!-- 닉네임 (필수) -->
+            <label class="auth-label">
+              <p class="auth-label-text">닉네임 <span style="color: red;">*</span></p>
+              <input class="auth-input" placeholder="닉네임을 입력하세요" type="text" name="nickname" value="<%= typeof user !== 'undefined' && user.nickname ? user.nickname : '' %>" required/>
+            </label>
+            
+            <!-- 비밀번호 변경 (선택사항) -->
+            <label class="auth-label">
+              <p class="auth-label-text">새 비밀번호</p>
+              <div class="auth-input-wrapper">
+                <input class="auth-input auth-input-password" placeholder="변경할 비밀번호를 입력하세요 (변경하지 않으려면 비워두세요)" type="password" name="password" id="password-input"/>
+                <button class="password-toggle-button auth-password-toggle" type="button">
+                  <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+              </div>
+              <p style="font-size: 12px; color: #666; margin-top: 5px;">비밀번호를 변경하지 않으려면 비워두세요.</p>
+            </label>
+            
+            <!-- 비밀번호 확인 (비밀번호 입력 시에만 필수) -->
+            <label class="auth-label">
+              <p class="auth-label-text">새 비밀번호 확인</p>
+              <div class="auth-input-wrapper">
+                <input class="auth-input auth-input-password" placeholder="비밀번호를 다시 입력하세요" type="password" name="passwordConfirm" id="password-confirm-input"/>
+                <button class="password-toggle-button auth-password-toggle" type="button">
+                  <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+              </div>
+            </label>
+            
+            <!-- 대학교 (선택사항) -->
+            <label class="auth-label">
+              <p class="auth-label-text">대학교</p>
+              <input class="auth-input" placeholder="예: 부산대학교" type="text" name="campus" value="<%= typeof user !== 'undefined' && user.campus ? user.campus : '' %>"/>
+            </label>
+            
+            <!-- 에러 메시지 -->
+            <% if (typeof error !== 'undefined' && error) { %>
+            <div class="auth-error">
+              <p class="auth-error-message"><%= error %></p>
+            </div>
+            <% } %>
+            
+            <!-- 성공 메시지 -->
+            <% if (typeof success !== 'undefined' && success) { %>
+            <div class="auth-success" style="color: green; margin-top: 10px; padding: 10px; background-color: #f0f9ff; border-radius: 4px;">
+              <p><%= success %></p>
+            </div>
+            <% } %>
+          </div>
+          
+          <!-- 완료/취소 버튼 -->
+          <div class="auth-form-actions">
+            <button type="button" id="cancel-edit-modal" class="auth-cancel-button">취소</button>
+            <button type="submit" class="auth-submit-button">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
