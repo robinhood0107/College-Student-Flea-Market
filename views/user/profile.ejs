@@ -17,11 +17,14 @@
             <div class="profile-content">
               <div class="profile-info">
                 <!-- 프로필 이미지 -->
-                <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_image ? user.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
                 <!-- 프로필 정보 -->
                 <div class="profile-details">
-                  <p class="profile-name"><%= typeof user !== 'undefined' ? user.name : '사용자' %></p>
-                  <p class="profile-email"><%= typeof user !== 'undefined' ? user.email : 'email@example.com' %></p>
+                  <p class="profile-name"><%= typeof user !== 'undefined' && user.nickname ? user.nickname : '사용자' %></p>
+                  <p class="profile-email"><%= typeof user !== 'undefined' && user.email ? user.email : 'email@example.com' %></p>
+                  <% if (typeof user !== 'undefined' && user.campus) { %>
+                  <p class="profile-campus"><%= user.campus %></p>
+                  <% } %>
                 </div>
               </div>
               <!-- 프로필 수정 버튼 -->
@@ -52,7 +55,7 @@
                   <div class="user-product-info">
                     <p class="user-product-title"><%= product.title %></p>
                     <p class="user-product-price">₩<%= product.price.toLocaleString() %></p>
-                    <p class="user-product-status <%= product.status === '판매중' ? 'user-product-status-active' : 'user-product-status-inactive' %>"><%= product.status %></p>
+                    <p class="user-product-status <%= product.status === 'FOR_SALE' ? 'user-product-status-active' : 'user-product-status-inactive' %>"><%= product.status === 'FOR_SALE' ? '판매중' : product.status === 'RESERVED' ? '예약중' : '판매완료' %></p>
                   </div>
                 </a>
                 <% }); %>
