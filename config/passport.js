@@ -1,7 +1,9 @@
 //공부
 
-//passport.js이라는 파일이름이지 실질적으로는 노드버드에서 배웠듯 LocalStrategy.js 파일이다.
-//LocalStrategy 설정하는 파일이니까...
+//이 파일 LocalStrategy이다!
+
+//passport.js이라는 파일이름이지 실질적으로는 노드버드에서 배웠듯 LocalStrategy 설정하는 파일이다
+//보통 passport.js로 이름짓는다 함
 
 //로그인 폼(login.ejs)에서 POST /auth/login 요청
 //    passport.js에서 req.body.email, req.body.password 전송
