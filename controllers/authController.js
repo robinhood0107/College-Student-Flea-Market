@@ -67,7 +67,7 @@ const authController = {
     //4. 로그인 페이지로 리다이렉트
     async join(req, res) {
         try {
-            const { email, password, passwordConfirm, name } = req.body;
+            const { email, password, passwordConfirm, name, campus } = req.body;
 
             // 입력값 검증
             if (!email || !password || !passwordConfirm || !name) {
@@ -75,6 +75,16 @@ const authController = {
                     error: '모든 필드를 입력해주세요.',
                     email: email || '',
                     showJoinForm: true  // 회원가입 폼 유지하기!
+                });
+            }
+
+            // 이메일 형식 검증
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.render('auth/login', {
+                    error: '올바른 이메일 형식을 입력해주세요.',
+                    email: email || '',
+                    showJoinForm: true
                 });
             }
 
@@ -115,7 +125,7 @@ const authController = {
                 email: email,
                 password: hashedPassword,  // 암호화된 비밀번호 저장
                 nickname: name,
-                campus: null 
+                campus: campus || null  // 선택사항: 입력값이 있으면 사용, 없으면 null
             };
 
             await User.create(userData);
@@ -161,7 +171,7 @@ const authController = {
             if (!user) {
                 // 인증 실패
                 return res.render('auth/login', {
-                    error: info.message || '로그인에 실패했습니다.',
+                    error: '이메일 또는 비밀번호가 올바르지 않습니다.',
                     email: req.body.email || ''
                 });
             }
@@ -176,20 +186,39 @@ const authController = {
                     });
                 }
 
-                // 로그인 성공 시 홈 페이지로 리다이렉트
-                return res.redirect('/');
+                return res.redirect('/product/list');
             });
         })(req, res, next);
     },
 
     //GET /auth/logout 로그아웃
     logout(req, res) {
+        // 세션 쿠키 이름 가져오기 (app.js에서 설정한 'sessionId' 사용)
+        const sessionCookieName = req.session.cookie.name || 'sessionId';
+        
+        // Passport.js의 req.logout()으로 사용자 정보 제거
         req.logout((err) => {
             if (err) {
                 console.error('로그아웃 에러:', err);
             }
-            // 로그아웃 한 다음에 리다이렉트 꼭 해주기
-            res.redirect('/');
+            
+            // 세션 완전히 삭제 (즉시 삭제)
+            req.session.destroy((destroyErr) => {
+                if (destroyErr) {
+                    console.error('세션 삭제 에러:', destroyErr);
+                }
+                
+                // 쿠키 즉시 삭제 (세션 쿠키)
+                res.clearCookie(sessionCookieName, {
+                    path: '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict'
+                });
+                
+                // 로그아웃 후 리다이렉트
+                res.redirect('/');
+            });
         });
     }
 };
