@@ -35,6 +35,9 @@ CREATE INDEX idx_products_category ON products(category);
 CREATE INDEX idx_products_status ON products(status);
 CREATE INDEX idx_products_title ON products(title);
 
+-- Full-Text 인덱스: title과 description에서 키워드 검색 성능 향상시키기 위해서 사용할 것!
+CREATE FULLTEXT INDEX idx_products_fulltext ON products(title, description);
+
 
 CREATE TABLE product_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
