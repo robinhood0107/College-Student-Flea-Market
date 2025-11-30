@@ -31,10 +31,10 @@ CREATE TABLE products (
         REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='상품 매물 정보';
 
-CREATE INDEX idx_products_category ON products(category); -- 카테고리 필터링 속도 향상 
-CREATE INDEX idx_products_status ON products(status);     -- 판매중 상품만 보기 속도 향상 
-CREATE INDEX idx_products_title ON products(title);       -- 제목 검색 속도 향상
---기억 안나면 데베 INDEX part 복습
+CREATE INDEX idx_products_category ON products(category);
+CREATE INDEX idx_products_status ON products(status);
+CREATE INDEX idx_products_title ON products(title);
+
 
 CREATE TABLE product_images (
     id INT AUTO_INCREMENT PRIMARY KEY,
