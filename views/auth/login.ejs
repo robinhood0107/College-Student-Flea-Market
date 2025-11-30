@@ -42,6 +42,10 @@
               <!-- 로그인 폼 제목 -->
               <h1 class="auth-title">로그인</h1>
               <form class="auth-form" action="/auth/login" method="POST">
+                <!-- 원래 가려던 페이지 저장 (로그인 후 리다이렉트용) -->
+                <% if (typeof returnTo !== 'undefined' && returnTo) { %>
+                <input type="hidden" name="returnTo" value="<%= returnTo %>"/>
+                <% } %>
                 <div class="auth-form-group">
                   <!-- 이메일 입력 -->
                   <label class="auth-label">

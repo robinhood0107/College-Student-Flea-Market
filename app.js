@@ -98,11 +98,18 @@ app.use((req, res, next) => {
 
 //여기가 라우터 연결 부분
 
+// 인증 미들웨어 (로그인 체크)
+const isAuthenticated = require('./middlewares/isAuthenticated');
+
+// 인증 라우터 (로그인/회원가입은 인증 불필요)
+app.use('/auth', require('./routes/authRoutes'));
+
+// 인증이 필요한 모든 라우트에 미들웨어 적용
+// 로그인하지 않은 사용자는 자동으로 /auth/login으로 리다이렉트됨
+app.use(isAuthenticated);
+
 // 메인 라우터 (홈 페이지)
 app.use('/', require('./routes/index'));
-
-// 인증 라우터
-app.use('/auth', require('./routes/authRoutes'));
 
 // 상품 라우터
 app.use('/product', require('./routes/productRoutes'));

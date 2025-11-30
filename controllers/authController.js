@@ -42,6 +42,10 @@ const authController = {
     },
     //GET /auth/login
     getLoginPage(req, res) {
+        // 이미 로그인된 사용자는 상품 목록으로 리다이렉트
+        if (req.user) {
+            return res.redirect('/product/list');
+        }
 
         //개인 공부용 추가 설명
         // URL 쿼리 파라미터에서 success 메시지 읽기
@@ -50,12 +54,14 @@ const authController = {
         // → req.query.success로 값 읽기
         // 없으면 null (|| null)
         const success = req.query.success || null;
+        const returnTo = req.query.returnTo || null; // 원래 가려던 페이지
         
         res.render('auth/login', { 
             error: null,
             email: null,
             showJoinForm: false,  // 로그인 폼을 보여주기 위한 플래그
-            success: success  // 회원가입 성공 메시지 (뷰에서 <%= success %>로 표시)
+            success: success,  // 회원가입 성공 메시지 (뷰에서 <%= success %>로 표시)
+            returnTo: returnTo  // 로그인 후 돌아갈 페이지
         });
     },
 
@@ -186,6 +192,12 @@ const authController = {
                     });
                 }
 
+                // 로그인 성공 시 원래 가려던 페이지로 리다이렉트 (있으면)
+                // 없으면 상품 목록 페이지로 리다이렉트
+                const returnTo = req.body.returnTo || req.query.returnTo;
+                if (returnTo && returnTo.startsWith('/') && !returnTo.startsWith('/auth')) {
+                    return res.redirect(returnTo);
+                }
                 return res.redirect('/product/list');
             });
         })(req, res, next);
