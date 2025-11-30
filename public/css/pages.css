@@ -1339,6 +1339,12 @@
   line-height: 1.5;
 }
 
+.profile-campus {
+  color: #666;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
 .profile-edit-button {
   display: flex;
   min-width: 84px;
