@@ -8,31 +8,113 @@ DB Pool (config/db.js)
     ↓ 연결
 MySQL Database
 */
-/**
- * models/User.js - 사용자(User) 관련 데이터베이스 쿼리
- * 
- * 역할:
- * - users 테이블에 대한 모든 SQL 쿼리를 담당
- * - 컨트롤러에서 호출할 수 있는 재사용 가능한 함수들 제공
- * - config/db.js의 pool을 사용하여 실제 쿼리 실행
- * 
- * config/db.js와의 차별화:
- * - config/db.js: 데이터베이스 연결 풀 설정 (어떻게 연결할지)
- * - models/User.js: 실제 SQL 쿼리 실행 (무엇을 조회/수정할지)
- * 
- * 사용 예시:
- * const User = require('./models/User');
- * const user = await User.findByEmail('test@example.com');
- * const newUser = await User.create({ email: '...', password: '...', nickname: '...' });
- */
-
 const db = require('../config/db'); // config/db.js의 pool 객체 사용
 
-//예시))))
 const User = {
+    /**
+     * 이메일로 사용자 조회
+     * 파라미터로 {string} email - 조회할 이메일
+     * 반환값으로 {Promise<Object|null>} 사용자 객체 또는 null
+     */
     async findByEmail(email) {
-        // 실제 SQL 쿼리 실행
-        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await db.query(
+            'SELECT * FROM users WHERE email = ?',
+            [email]
+        );
+        return rows[0] || null; // 첫 번째 결과 또는 null
+    },
+
+    /**
+     * ID로 사용자 조회
+     * 파라미터로 {number} id - 조회할 사용자 ID
+     * 반환값으로 {Promise<Object|null>} 사용자 객체 또는 null
+     */
+    async findById(id) {
+        const [rows] = await db.query(
+            'SELECT id, email, nickname, campus, profile_img, isAdmin, created_at FROM users WHERE id = ?',
+            [id]
+        );
         return rows[0] || null;
+    },
+
+    /**
+     * 새 사용자 생성 (회원가입)
+     * 파라미터로 {Object} userData - 사용자 데이터 { email, password, nickname, campus? }
+     * 반환값으로 {Promise<Object>} 생성된 사용자 객체 (비밀번호 제외)
+     */
+    async create(userData) {
+        const { email, password, nickname, campus = null } = userData;
+        const [result] = await db.query(
+            'INSERT INTO users (email, password, nickname, campus) VALUES (?, ?, ?, ?)',
+            [email, password, nickname, campus]
+        );
+        // 생성된 사용자 정보 반환 (비밀번호 제외)
+        return await this.findById(result.insertId);
+    },
+
+    /**
+     * 사용자 정보 수정
+     * 파라미터로 {number} id - 수정할 사용자 ID
+     * 파라미터로 {Object} updateData - 수정할 데이터 { nickname?, campus?, profile_img? }
+     * 반환값으로 {Promise<Object>} 수정된 사용자 객체
+     */
+    async update(id, updateData) {
+        const fields = [];
+        const values = [];
+        
+        if (updateData.nickname !== undefined) {
+            fields.push('nickname = ?');
+            values.push(updateData.nickname);
+        }
+        if (updateData.campus !== undefined) {
+            fields.push('campus = ?');
+            values.push(updateData.campus);
+        }
+        if (updateData.profile_img !== undefined) {
+            fields.push('profile_img = ?');
+            values.push(updateData.profile_img);
+        }
+        
+        if (fields.length === 0) {
+            return await this.findById(id);
+        }
+        
+        values.push(id);
+        await db.query(
+            `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+            values
+        );
+        
+        return await this.findById(id);
+    },
+
+    /**
+     * 사용자 삭제
+     * 파라미터로 {number} id - 삭제할 사용자 ID
+     * 반환값으로 {Promise<boolean>} 삭제 성공 여부
+     */
+    async delete(id) {
+        const [result] = await db.query(
+            'DELETE FROM users WHERE id = ?',
+            [id]
+        );
+        return result.affectedRows > 0;
+    },
+
+    /**
+     * (관리자용)
+     * 전체 사용자 목록 조회 
+     * 파라미터로 {Object} options - 조회 옵션 { limit?, offset? }
+     * 반환값으로 {Promise<Array>} 사용자 배열
+     */
+    async findAll(options = {}) {
+        const { limit = 50, offset = 0 } = options;
+        const [rows] = await db.query(
+            'SELECT id, email, nickname, campus, isAdmin, created_at FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?',
+            [limit, offset]
+        );
+        return rows;
     }
 };
+
+module.exports = User;
