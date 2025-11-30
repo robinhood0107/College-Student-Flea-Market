@@ -127,6 +127,11 @@
                       </button>
                     </div>
                   </label>
+                  <!-- 대학교 입력 -->
+                  <label class="auth-label">
+                    <p class="auth-label-text">대학교</p>
+                    <input class="auth-input" placeholder="예: 부산대학교" type="text" name="campus"/>
+                  </label>
                 </div>
                 <!-- 에러 메시지 -->
                 <div class="auth-error">
@@ -144,6 +149,9 @@
       </main>
     </div>
   </div>
-  <script src="/public/js/auth.js"></script>
+  <!-- auth.js가 Utils 객체를 사용해서 common.js를 먼저 로드 -->
+  <script src="/js/common.js"></script>
+  <!-- auth.js 로드 -->
+  <script src="/js/auth.js"></script>
 </body>
 </html>
