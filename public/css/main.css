@@ -1,8 +1,6 @@
 /**
  * main.css - 메인 CSS 진입점
  * 
- * 이 파일은 모든 CSS 파일을 import하는 메인 진입점입니다.
- * HTML에서는 이 파일만 연결하면 됩니다.
  * 
  * 파일 구조:
  * 1. base.css - CSS Reset 및 CSS Variables (가장 먼저 로드)
