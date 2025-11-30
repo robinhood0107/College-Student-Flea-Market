@@ -55,7 +55,7 @@ const User = {
     /**
      * 사용자 정보 수정
      * 파라미터로 {number} id - 수정할 사용자 ID
-     * 파라미터로 {Object} updateData - 수정할 데이터 { nickname?, campus?, profile_img? }
+     * 파라미터로 {Object} updateData - 수정할 데이터 { nickname?, campus?, profile_img?, password? }
      * 반환값으로 {Promise<Object>} 수정된 사용자 객체
      */
     async update(id, updateData) {
@@ -73,6 +73,10 @@ const User = {
         if (updateData.profile_img !== undefined) {
             fields.push('profile_img = ?');
             values.push(updateData.profile_img);
+        }
+        if (updateData.password !== undefined) {
+            fields.push('password = ?');
+            values.push(updateData.password);
         }
         
         if (fields.length === 0) {
