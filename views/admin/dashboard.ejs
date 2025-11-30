@@ -58,7 +58,7 @@
                         <tr>
                           <td class="admin-table-cell"><%= user.id %></td>
                           <td class="admin-table-cell"><%= user.email %></td>
-                          <td class="admin-table-cell"><%= user.name %></td>
+                          <td class="admin-table-cell"><%= user.nickname %></td>
                           <td class="admin-table-cell"><%= user.created_at ? new Date(user.created_at).toLocaleDateString('ko-KR') : '-' %></td>
                           <td class="admin-table-cell text-right">
                             <form action="/admin/user/<%= user.id %>/delete" method="POST" style="display: inline;">
@@ -97,7 +97,7 @@
                         <% adminProducts.forEach(product => { %>
                         <tr>
                           <td class="admin-table-cell"><%= product.title %></td>
-                          <td class="admin-table-cell"><%= product.seller ? product.seller.name : '알 수 없음' %></td>
+                          <td class="admin-table-cell"><%= product.seller ? product.seller.nickname : '알 수 없음' %></td>
                           <td class="admin-table-cell">₩<%= product.price.toLocaleString() %></td>
                           <td class="admin-table-cell"><%= product.created_at ? new Date(product.created_at).toLocaleDateString('ko-KR') : '-' %></td>
                           <td class="admin-table-cell text-right">

@@ -50,11 +50,11 @@
               <div class="seller-profile">
                 <div class="seller-info">
                   <!-- 판매자 프로필 이미지 -->
-                  <div class="seller-avatar" style='background-image: url("<%= typeof product !== 'undefined' && product.seller && product.seller.profile_image ? product.seller.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                  <div class="seller-avatar" style='background-image: url("<%= typeof product !== 'undefined' && product.seller && product.seller.profile_img ? product.seller.profile_img : '/uploads/default-avatar.jpg' %>");'></div>
                   <!-- 판매자 정보 -->
                   <div>
-                    <p class="seller-name"><%= typeof product !== 'undefined' && product.seller ? product.seller.name : '판매자' %></p>
-                    <p class="seller-verified"><%= typeof product !== 'undefined' && product.seller && product.seller.is_verified ? 'Verified University Student' : 'University Student' %></p>
+                    <p class="seller-name"><%= typeof product !== 'undefined' && product.seller ? product.seller.nickname : '판매자' %></p>
+                    <p class="seller-verified">University Student</p>
                   </div>
                 </div>
                 <!-- 수정/삭제 버튼 -->
@@ -71,15 +71,15 @@
               <div class="status-selector">
                 <form action="/product/<%= product.id %>/status" method="POST" class="status-form">
                   <label class="status-radio-label">
-                    <input <%= product.status === 'For Sale' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="For Sale" onchange="this.form.submit()"/>
+                    <input <%= product.status === 'FOR_SALE' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="FOR_SALE" onchange="this.form.submit()"/>
                     <span class="truncate">판매중</span>
                   </label>
                   <label class="status-radio-label">
-                    <input <%= product.status === 'Reserved' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="Reserved" onchange="this.form.submit()"/>
+                    <input <%= product.status === 'RESERVED' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="RESERVED" onchange="this.form.submit()"/>
                     <span class="truncate">예약중</span>
                   </label>
                   <label class="status-radio-label">
-                    <input <%= product.status === 'Sold' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="Sold" onchange="this.form.submit()"/>
+                    <input <%= product.status === 'SOLD_OUT' ? 'checked' : '' %> class="sr-only" name="product-status" type="radio" value="SOLD_OUT" onchange="this.form.submit()"/>
                     <span class="truncate">판매완료</span>
                   </label>
                 </form>
@@ -136,7 +136,7 @@
             <div class="comment-form-wrapper">
               <form class="comment-form" action="/product/<%= typeof product !== 'undefined' ? product.id : '' %>/comment" method="POST">
                 <div class="comment-form-content">
-                  <div class="comment-user-avatar" style='background-image: url("<%= user.profile_image || '/uploads/default-avatar.jpg' %>");'></div>
+                  <div class="comment-user-avatar" style='background-image: url("<%= user.profile_img || '/uploads/default-avatar.jpg' %>");'></div>
                   <div class="comment-input-wrapper">
                     <textarea 
                       class="comment-input" 
@@ -164,16 +164,10 @@
                 <% comments.forEach(comment => { %>
                 <div class="comment-item" data-comment-id="<%= comment.id %>">
                   <div class="comment-content">
-                    <div class="comment-user-avatar" style='background-image: url("<%= comment.user && comment.user.profile_image ? comment.user.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                    <div class="comment-user-avatar" style='background-image: url("<%= comment.user && comment.user.profile_img ? comment.user.profile_img : '/uploads/default-avatar.jpg' %>");'></div>
                     <div class="comment-body">
                       <div class="comment-header">
-                        <span class="comment-author"><%= comment.user ? comment.user.name : '익명' %></span>
-                        <% if (comment.user && comment.user.is_verified) { %>
-                        <span class="verified-badge">
-                          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 0.75rem;">school</span>
-                          <span>학교인증</span>
-                        </span>
-                        <% } %>
+                        <span class="comment-author"><%= comment.user ? comment.user.nickname : '익명' %></span>
                         <span class="comment-time"><%= comment.created_at || '방금 전' %></span>
                       </div>
                       <p class="comment-text"><%= comment.content %></p>
@@ -192,7 +186,7 @@
                   <% if (typeof user !== 'undefined' && user) { %>
                   <form class="reply-form" data-parent-id="<%= comment.id %>" style="display: none;" action="/product/<%= typeof product !== 'undefined' ? product.id : '' %>/comment/<%= comment.id %>/reply" method="POST">
                     <div class="reply-form-content">
-                      <div class="comment-user-avatar" style='background-image: url("<%= user.profile_image || '/uploads/default-avatar.jpg' %>");'></div>
+                      <div class="comment-user-avatar" style='background-image: url("<%= user.profile_img || '/uploads/default-avatar.jpg' %>");'></div>
                       <div class="comment-input-wrapper">
                         <textarea 
                           class="comment-input" 
@@ -216,16 +210,10 @@
                     <% comment.replies.forEach(reply => { %>
                     <div class="reply-item" data-reply-id="<%= reply.id %>">
                       <div class="comment-content">
-                        <div class="comment-user-avatar" style='background-image: url("<%= reply.user && reply.user.profile_image ? reply.user.profile_image : '/uploads/default-avatar.jpg' %>");'></div>
+                        <div class="comment-user-avatar" style='background-image: url("<%= reply.user && reply.user.profile_img ? reply.user.profile_img : '/uploads/default-avatar.jpg' %>");'></div>
                         <div class="comment-body">
                           <div class="comment-header">
-                            <span class="comment-author"><%= reply.user ? reply.user.name : '익명' %></span>
-                            <% if (reply.user && reply.user.is_verified) { %>
-                            <span class="verified-badge">
-                              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 0.75rem;">school</span>
-                              <span>학교인증</span>
-                            </span>
-                            <% } %>
+                            <span class="comment-author"><%= reply.user ? reply.user.nickname : '익명' %></span>
                             <span class="comment-time"><%= reply.created_at || '방금 전' %></span>
                           </div>
                           <p class="comment-text"><%= reply.content %></p>

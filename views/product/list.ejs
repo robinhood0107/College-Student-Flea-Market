@@ -51,19 +51,12 @@
                     <!-- 상품 이미지 -->
                     <div class="product-image" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
                     <!-- 상품 상태 뱃지 -->
-                    <span class="product-status-badge"><%= product.condition || 'Good' %></span>
+                    <span class="product-status-badge"><%= product.status === 'FOR_SALE' ? '판매중' : product.status === 'RESERVED' ? '예약중' : '판매완료' %></span>
                   </div>
                   <div>
                     <div class="flex items-center gap-2">
                       <!-- 상품명 -->
                       <p class="product-title"><%= product.title %></p>
-                      <% if (product.is_verified) { %>
-                      <!-- 학교인증 뱃지 -->
-                      <span class="verified-badge">
-                        <span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">school</span>
-                        <span>학교인증</span>
-                      </span>
-                      <% } %>
                     </div>
                     <!-- 가격 -->
                     <p class="product-price">₩<%= product.price.toLocaleString() %></p>
