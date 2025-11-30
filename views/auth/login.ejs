@@ -9,7 +9,33 @@
     <div class="layout-container flex h-full grow flex-col">
       <!-- 메인 콘텐츠 -->
       <main class="auth-container">
-        <div class="auth-slider-container">
+        <div class="auth-slider-container <%= typeof showJoinForm !== 'undefined' && showJoinForm ? 'show-join' : '' %>">
+          <!-- 개인 공부용 설명 -->
+          
+          <!--
+          EJS 태그 설명:
+          
+          1. <%= %> : 서버에서 전달된 변수를 HTML에 출력하는 EJS 태그
+            - 컨트롤러에서 res.render('auth/login', { showJoinForm: true })로 전달한 데이터를 사용
+            - 결과가 문자열로 렌더링되어 HTML에 삽입됨
+          
+          typeof showJoinForm !== 'undefined' && showJoinForm ? 'show-join' : ''
+            -삼항연산자다 복잡할 것 없음
+            -showJoinForm이 true면 'show-join' 반환, false면 빈 문자열 반환
+          
+          최종 결과:
+          - showJoinForm이 true → class="auth-slider-container show-join"
+          - showJoinForm이 false 또는 없음 → class="auth-slider-container "
+          
+          auth-slider-container show-join 이건 뭐 어디있는 건가?
+
+          내 답변:css파일에 있는 거임
+              css에 이미 만들어놓은 선택자가 있음 
+              .auth-slider-container.show-join .auth-card-login
+              .auth-slider-container.show-join .auth-card-join
+              이런식으로
+          -->
+          
           <!-- 로그인 카드 -->
           <div class="auth-card auth-card-login">
             <div class="auth-card-content">
@@ -42,6 +68,12 @@
                 <% } else { %>
                 <div class="auth-error">
                   <p class="auth-error-message"></p>
+                </div>
+                <% } %>
+                <!-- 성공 메시지 (회원가입 성공 시 표시) -->
+                <% if (typeof success !== 'undefined' && success) { %>
+                <div class="auth-success" style="color: green; margin-top: 10px; padding: 10px; background-color: #f0f9ff; border-radius: 4px;">
+                  <p><%= success %></p>
                 </div>
                 <% } %>
                 <!-- 로그인 버튼 -->
