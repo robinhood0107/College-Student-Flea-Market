@@ -16,8 +16,13 @@
           <div class="profile-card">
             <div class="profile-content">
               <div class="profile-info">
-                <!-- 프로필 이미지 -->
-                <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
+                <label for="profile-image-upload" style="cursor: pointer; position: relative; display: inline-block;">
+                  <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
+                  <div style="position: absolute; bottom: 0; right: 0; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; pointer-events: none;">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">camera_alt</span>
+                  </div>
+                </label>
+                <input type="file" id="profile-image-upload" name="profile_img" accept="image/*" style="display: none;" />
                 <!-- 프로필 정보 -->
                 <div class="profile-details">
                   <p class="profile-name"><%= typeof user !== 'undefined' && user.nickname ? user.nickname : '사용자' %></p>
@@ -175,6 +180,76 @@
             passwordInput.focus();
             return false;
           }
+        });
+      }
+    })();
+  </script>
+
+  <!-- 프로필 이미지 업로드 스크립트 -->
+  <script>
+    (function() {
+      const profileImageUpload = document.getElementById('profile-image-upload');
+      const profileAvatar = document.getElementById('profile-avatar');
+      
+      if (profileImageUpload) {
+        profileImageUpload.addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          
+          if (!file) return;
+          
+          // 이미지 파일인지 확인
+          if (!file.type.startsWith('image/')) {
+            alert('이미지 파일만 업로드할 수 있습니다.');
+            event.target.value = '';
+            return;
+          }
+          
+          // 파일 크기 확인 (5MB 제한)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB 이하여야 합니다.');
+            event.target.value = '';
+            return;
+          }
+          
+          // 미리보기 표시
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            if (profileAvatar) {
+              profileAvatar.style.backgroundImage = `url(${e.target.result})`;
+            }
+          };
+          reader.readAsDataURL(file);
+          
+          // FormData 생성
+          const formData = new FormData();
+          formData.append('profile_img', file);
+          
+          // AJAX로 업로드
+          fetch('/user/profile-image', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // 성공 시 페이지 새로고침하여 서버에서 업데이트된 이미지 표시
+              window.location.reload();
+            } else {
+              alert(data.message || '프로필 이미지 업로드에 실패했습니다.');
+              // 실패 시 원래 이미지로 복원
+              if (profileAvatar) {
+                profileAvatar.style.backgroundImage = 'url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>")';
+              }
+            }
+          })
+          .catch(error => {
+            console.error('프로필 이미지 업로드 오류:', error);
+            alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+            // 오류 시 원래 이미지로 복원
+            if (profileAvatar) {
+              profileAvatar.style.backgroundImage = 'url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>")';
+            }
+          });
         });
       }
     })();

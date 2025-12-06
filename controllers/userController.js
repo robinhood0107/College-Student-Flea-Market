@@ -118,6 +118,34 @@ const userController = {
             console.error('프로필 수정 에러:', error);
             res.redirect('/user/profile?error=프로필 수정 중 오류가 발생했습니다.');
         }
+    },
+
+    // POST /user/profile-image - 프로필 이미지 업로드
+    async uploadProfileImage(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
+            }
+
+            if (!req.file) {
+                return res.status(400).json({ success: false, message: '이미지 파일을 선택해주세요.' });
+            }
+
+            const userId = req.user.id;
+            const imagePath = `/uploads/${req.file.filename}`;
+
+            // 사용자 프로필 이미지 업데이트
+            await User.update(userId, { profile_img: imagePath });
+
+            return res.json({ 
+                success: true, 
+                message: '프로필 이미지가 업로드되었습니다.',
+                imagePath: imagePath
+            });
+        } catch (error) {
+            console.error('프로필 이미지 업로드 에러:', error);
+            return res.status(500).json({ success: false, message: '프로필 이미지 업로드 중 오류가 발생했습니다.' });
+        }
     }
 };
 
