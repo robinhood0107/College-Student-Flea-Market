@@ -35,10 +35,10 @@ exports.list = async (req, res) => {
             offset
         }, req.user ? req.user.id : null);
 
-        return res.render('product/list', { products, category, keyword, status, page });
+        return res.render('product/list', { products, category, keyword, status, page, user: req.user || null });
     } catch (error) {
         console.error(error);
-        res.status(500).send("상품 목록 오류");
+        return res.status(500).send("상품 목록 오류");
     }
 };
 
@@ -54,8 +54,26 @@ exports.getWritePage = (req, res) => {
  */
 exports.create = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).redirect('/auth/login');
+        }
+
         const seller_id = req.user.id;
         const { title, price, category, description, location } = req.body;
+
+        // 입력값 검증
+        if (!title || !title.trim()) {
+            return res.status(400).send("상품명을 입력해주세요.");
+        }
+        if (!price || isNaN(price) || parseInt(price) < 0) {
+            return res.status(400).send("유효한 가격을 입력해주세요.");
+        }
+        if (!category || !category.trim()) {
+            return res.status(400).send("카테고리를 선택해주세요.");
+        }
+        if (!description || !description.trim()) {
+            return res.status(400).send("상품 설명을 입력해주세요.");
+        }
 
         let imagePath = null;
         if (req.file) {
@@ -63,14 +81,14 @@ exports.create = async (req, res) => {
         }
 
         await Product.create(
-            { seller_id, title, price: parseInt(price), category, description, location },
+            { seller_id, title: title.trim(), price: parseInt(price), category: category.trim(), description: description.trim(), location: location ? location.trim() : null },
             imagePath ? [imagePath] : []
         );
 
         return res.redirect('/product/list');
     } catch (error) {
         console.error("상품 등록 오류:", error);
-        res.status(500).send("상품 등록 중 오류 발생");
+        return res.status(500).send("상품 등록 중 오류 발생");
     }
 };
 
@@ -114,6 +132,20 @@ exports.update = async (req, res) => {
         const id = req.params.id;
         const { title, price, category, description, location } = req.body;
 
+        // 입력값 검증
+        if (!title || !title.trim()) {
+            return res.status(400).send("상품명을 입력해주세요.");
+        }
+        if (!price || isNaN(price) || parseInt(price) < 0) {
+            return res.status(400).send("유효한 가격을 입력해주세요.");
+        }
+        if (!category || !category.trim()) {
+            return res.status(400).send("카테고리를 선택해주세요.");
+        }
+        if (!description || !description.trim()) {
+            return res.status(400).send("상품 설명을 입력해주세요.");
+        }
+
         // 상품 존재 및 권한 확인
         const product = await Product.findById(id);
         if (!product) {
@@ -126,11 +158,11 @@ exports.update = async (req, res) => {
 
         // 수정할 데이터 준비
         const updateData = {
-            title,
+            title: title.trim(),
             price: parseInt(price),
-            category,
-            description,
-            location: location || null
+            category: category.trim(),
+            description: description.trim(),
+            location: location ? location.trim() : null
         };
 
         // 이미지가 새로 업로드된 경우
@@ -171,7 +203,8 @@ exports.detail = async (req, res) => {
 
         return res.render('product/detail', {
             product,
-            seller,
+            seller: seller || null,
+            user: req.user || null,
             comments: []
         });
     } catch (error) {
@@ -189,11 +222,15 @@ exports.toggleLike = async (req, res) => {
         const userId = req.user.id;
         const productId = req.params.id;
 
+        // 상품 존재 확인
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "상품을 찾을 수 없습니다." });
+        }
+
         const liked = await Product.toggleLike(userId, productId);
 
         // 좋아요 개수 다시 조회
-        const product = await Product.findById(productId);
-
         const likeCount = await Product.countLikes(productId);
 
         return res.json({
@@ -219,6 +256,12 @@ exports.updateStatus = async (req, res) => {
 
         const productId = req.params.id;
         const newStatus = req.body['product-status'] || req.body.status;// 클라이언트에서 status로 보냄
+
+        // 상태 값 유효성 검증
+        const validStatuses = ['FOR_SALE', 'RESERVED', 'SOLD'];
+        if (!newStatus || !validStatuses.includes(newStatus)) {
+            return res.status(400).json({ success: false, message: "유효하지 않은 상태 값입니다." });
+        }
 
         // 판매자 본인 확인 (보안)
         const product = await Product.findById(productId);
