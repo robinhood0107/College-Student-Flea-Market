@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const User = require('../models/User');
+const db = require('../config/db');
 
 const categoryMap = {
     "Electronics": "디지털기기",
@@ -70,6 +71,86 @@ exports.create = async (req, res) => {
     } catch (error) {
         console.error("상품 등록 오류:", error);
         res.status(500).send("상품 등록 중 오류 발생");
+    }
+};
+
+/**
+ * 상품 수정 페이지
+ */
+exports.getEditPage = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).redirect('/auth/login');
+        }
+
+        const id = req.params.id;
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return res.status(404).send("상품을 찾을 수 없습니다.");
+        }
+
+        // 판매자 본인 확인 (보안)
+        if (product.seller_id !== req.user.id) {
+            return res.status(403).send("권한이 없습니다.");
+        }
+
+        return res.render('product/write', { product });
+    } catch (error) {
+        console.error("상품 수정 페이지 오류:", error);
+        res.status(500).send("상품 수정 페이지 로드 중 오류 발생");
+    }
+};
+
+/**
+ * 상품 수정 처리
+ */
+exports.update = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).redirect('/auth/login');
+        }
+
+        const id = req.params.id;
+        const { title, price, category, description, location } = req.body;
+
+        // 상품 존재 및 권한 확인
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).send("상품을 찾을 수 없습니다.");
+        }
+
+        if (product.seller_id !== req.user.id) {
+            return res.status(403).send("권한이 없습니다.");
+        }
+
+        // 수정할 데이터 준비
+        const updateData = {
+            title,
+            price: parseInt(price),
+            category,
+            description,
+            location: location || null
+        };
+
+        // 이미지가 새로 업로드된 경우
+        if (req.file) {
+            const newImagePath = `/uploads/${req.file.filename}`;
+            
+            // 기존 이미지 삭제
+            await db.query('DELETE FROM product_images WHERE product_id = ?', [id]);
+            
+            // 새 이미지 추가
+            await db.query('INSERT INTO product_images (product_id, image_path) VALUES (?, ?)', [id, newImagePath]);
+        }
+
+        // 상품 정보 업데이트
+        await Product.update(id, updateData);
+
+        return res.redirect(`/product/${id}`);
+    } catch (error) {
+        console.error("상품 수정 오류:", error);
+        res.status(500).send("상품 수정 중 오류 발생");
     }
 };
 

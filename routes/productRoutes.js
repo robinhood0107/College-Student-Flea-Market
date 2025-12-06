@@ -25,7 +25,7 @@ router.get('/:id/edit', productController.getEditPage || ((req, res) => {
 }));
 
 // POST /product/:id/edit - 상품 수정 처리
-router.post('/:id/edit', productController.update || ((req, res) => {
+router.post('/:id/edit', upload.single('image'), productController.update || ((req, res) => {
     res.redirect(`/product/${req.params.id}`);
 }));
 
