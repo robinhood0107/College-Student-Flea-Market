@@ -2,7 +2,7 @@
 <html class="light" lang="ko">
 <head>
   <%- include('../partials/head') %>
-  <title>상품 등록 | Campus flea Market</title>
+  <title><%= typeof product !== 'undefined' && product ? '상품 수정' : '상품 등록' %> | Campus flea Market</title>
 </head>
 <body class="font-display">
   <div class="relative flex h-auto min-h-screen w-full flex-col bg-main group/design-root overflow-x-hidden">
@@ -16,13 +16,13 @@
           <!-- 페이지 제목 -->
           <div class="page-header">
             <div class="page-header-content">
-              <p class="page-title">상품 등록</p>
+              <p class="page-title"><%= typeof product !== 'undefined' && product ? '상품 수정' : '상품 등록' %></p>
               <p class="page-subtitle">판매할 상품의 정보를 정확하게 입력해주세요.</p>
             </div>
           </div>
 
-          <!-- 상품 등록 폼 -->
-          <form id="product-form" action="/product/write" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
+          <!-- 상품 등록/수정 폼 -->
+          <form id="product-form" action="<%= typeof product !== 'undefined' && product ? `/product/${product.id}/edit` : '/product/write' %>" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
 
             <!-- 상품 이미지 업로드 섹션 -->
             <div class="flex flex-col gap-4">
@@ -51,10 +51,14 @@
               <div class="image-preview-section">
                 <div class="image-preview-header">
                   <p class="image-preview-count">
-                    <span id="image-count">0</span> / 1
+                    <span id="image-count"><%= typeof product !== 'undefined' && product && product.images && product.images.length > 0 ? '1' : '0' %></span> / 1
                   </p>
                 </div>
-                <div class="image-preview-container" id="image-preview"></div>
+                <div class="image-preview-container" id="image-preview">
+                  <% if (typeof product !== 'undefined' && product && product.images && product.images.length > 0) { %>
+                    <img src="<%= product.images[0].image_path %>" class="preview-image" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;" />
+                  <% } %>
+                </div>
               </div>
             </div>
 
@@ -69,7 +73,7 @@
                 <!-- 상품명 -->
                 <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium">상품명 <span class="text-red-500">*</span></label>
-                  <input class="form-input w-full rounded-lg" id="product-title" name="title" placeholder="상품명을 입력하세요" type="text" required />
+                  <input class="form-input w-full rounded-lg" id="product-title" name="title" placeholder="상품명을 입력하세요" type="text" value="<%= typeof product !== 'undefined' && product ? product.title : '' %>" required />
                 </div>
 
                 <!-- 카테고리 -->
@@ -77,29 +81,29 @@
                   <label class="text-sm font-medium">카테고리 <span class="text-red-500">*</span></label>
                   <select class="form-select w-full rounded-lg" id="category" name="category" required>
                     <option value="">카테고리를 선택하세요</option>
-                    <option value="디지털기기">디지털기기</option>
-                    <option value="생활가전">생활가전</option>
-                    <option value="가구/인테리어">가구/인테리어</option>
-                    <option value="의류">의류</option>
+                    <option value="디지털기기" <%= typeof product !== 'undefined' && product && product.category === '디지털기기' ? 'selected' : '' %>>디지털기기</option>
+                    <option value="생활가전" <%= typeof product !== 'undefined' && product && product.category === '생활가전' ? 'selected' : '' %>>생활가전</option>
+                    <option value="가구/인테리어" <%= typeof product !== 'undefined' && product && product.category === '가구/인테리어' ? 'selected' : '' %>>가구/인테리어</option>
+                    <option value="의류" <%= typeof product !== 'undefined' && product && product.category === '의류' ? 'selected' : '' %>>의류</option>
                   </select>
                 </div>
 
                 <!-- 가격 -->
                 <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium">가격 <span class="text-red-500">*</span></label>
-                  <input class="form-input w-full rounded-lg" id="price" name="price" placeholder="가격을 입력하세요" type="number" min="0" required />
+                  <input class="form-input w-full rounded-lg" id="price" name="price" placeholder="가격을 입력하세요" type="number" min="0" value="<%= typeof product !== 'undefined' && product ? product.price : '' %>" required />
                 </div>
 
                 <!-- 거래 희망 장소 -->
                 <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium">거래 희망 장소</label>
-                  <input class="form-input w-full rounded-lg" id="location" name="location" placeholder="예: 부산광역시 금정구" type="text" />
+                  <input class="form-input w-full rounded-lg" id="location" name="location" placeholder="예: 부산광역시 금정구" type="text" value="<%= typeof product !== 'undefined' && product ? (product.location || '') : '' %>" />
                 </div>
 
                 <!-- 상품 설명 -->
                 <div class="flex flex-col gap-2">
                   <label class="text-sm font-medium">상품 설명 <span class="text-red-500">*</span></label>
-                  <textarea class="form-textarea w-full rounded-lg" id="description" name="description" placeholder="상품 설명을 입력하세요" rows="6" required></textarea>
+                  <textarea class="form-textarea w-full rounded-lg" id="description" name="description" placeholder="상품 설명을 입력하세요" rows="6" required><%= typeof product !== 'undefined' && product ? product.description : '' %></textarea>
                 </div>
 
               </div>
@@ -112,8 +116,8 @@
       <!-- 푸터 -->
       <footer class="form-footer">
         <div class="form-footer-content">
-          <a href="/product/list" class="btn btn-secondary btn-lg">취소</a>
-          <button type="submit" form="product-form" class="btn btn-primary btn-lg">등록하기</button>
+          <a href="<%= typeof product !== 'undefined' && product ? `/product/${product.id}` : '/product/list' %>" class="btn btn-secondary btn-lg">취소</a>
+          <button type="submit" form="product-form" class="btn btn-primary btn-lg"><%= typeof product !== 'undefined' && product ? '수정하기' : '등록하기' %></button>
         </div>
       </footer>
 
@@ -122,36 +126,53 @@
 
   <%- include('../partials/footer') %>
 
-  <!-- 단일 이미지 제한 스크립트 -->
+  <script src="/js/product.js"></script>
   <script>
-    document.getElementById("image-upload").addEventListener("change", function(event) {
-      const files = event.target.files;
+    // 수정 모드에서 기존 이미지 정보 저장
+    <% if (typeof product !== 'undefined' && product && product.images && product.images.length > 0) { %>
+    const existingImage = {
+      path: '<%= product.images[0].image_path %>',
+      html: '<img src="<%= product.images[0].image_path %>" class="preview-image" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;" />'
+    };
+    <% } else { %>
+    const existingImage = null;
+    <% } %>
 
-      // 여러 장 선택 시 차단
-      if (files.length > 1) {
-        alert("상품 이미지는 1장만 업로드할 수 있습니다.");
-        event.target.value = ""; // 파일 초기화
-        document.getElementById("image-count").textContent = "0";
-        document.getElementById("image-preview").innerHTML = "";
-        return;
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageUpload = document.getElementById('image-upload');
+      if (!imageUpload) return;
 
-      // 미리보기
-      const preview = document.getElementById("image-preview");
-      preview.innerHTML = ""; 
+      imageUpload.addEventListener('change', function(event) {
+        const files = event.target.files;
+        
+        // 여러 장 선택 시 기존 이미지 복원 (product.js가 이미 에러 처리해서 그렇다)
+        if (files.length > 1 && existingImage) {
+          setTimeout(() => {
+            const preview = document.getElementById("image-preview");
+            if (preview && preview.innerHTML === "") {
+              preview.innerHTML = existingImage.html;
+              document.getElementById("image-count").textContent = "1";
+            }
+          }, 100);
+        }
 
-      if (files.length === 1) {
-        document.getElementById("image-count").textContent = "1";
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(files[0]);
-        img.className = "preview-image";
-        img.style.width = "120px";
-        img.style.height = "120px";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "8px";
-        preview.appendChild(img);
-      }
+        // 수정 모드에서 파일 선택 취소 시 기존 이미지 복원하는 것!
+        if (files.length === 0 && existingImage) {
+          setTimeout(() => {
+            const preview = document.getElementById("image-preview");
+            if (preview && preview.innerHTML === "") {
+              preview.innerHTML = existingImage.html;
+              document.getElementById("image-count").textContent = "1";
+            }
+          }, 100);
+        }
+      });
     });
+    
+    // 수정 모드일 때 기존 이미지가 있으면 카운트 표시
+    <% if (typeof product !== 'undefined' && product && product.images && product.images.length > 0) { %>
+    document.getElementById("image-count").textContent = "1";
+    <% } %>
   </script>
 
 </body>

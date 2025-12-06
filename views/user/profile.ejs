@@ -16,8 +16,13 @@
           <div class="profile-card">
             <div class="profile-content">
               <div class="profile-info">
-                <!-- 프로필 이미지 -->
-                <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
+                <label for="profile-image-upload" style="cursor: pointer; position: relative; display: inline-block;">
+                  <div id="profile-avatar" class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
+                  <div style="position: absolute; bottom: 0; right: 0; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; pointer-events: none;">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">camera_alt</span>
+                  </div>
+                </label>
+                <input type="file" id="profile-image-upload" name="profile_img" accept="image/*" style="display: none;" />
                 <!-- 프로필 정보 -->
                 <div class="profile-details">
                   <p class="profile-name"><%= typeof user !== 'undefined' && user.nickname ? user.nickname : '사용자' %></p>
@@ -168,13 +173,116 @@
             return false;
           }
           
-          // 비밀번호 길이 검증 (최소 12자)
-          if (password && password.length < 12) {
+          // 비밀번호 길이 검증 (최소 6자)
+          if (password && password.length < 6) {
             e.preventDefault();
-            alert('비밀번호는 최소 12자 이상이어야 합니다.');
+            alert('비밀번호는 최소 6자 이상이어야 합니다.');
             passwordInput.focus();
             return false;
           }
+        });
+      }
+      
+      // 회원 탈퇴 버튼 클릭 이벤트
+      const deleteAccountBtn = document.getElementById('delete-account-btn');
+      if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          if (confirm('정말로 회원 탈퇴를 하시겠습니까?\n탈퇴한 계정은 복구할 수 없습니다.')) {
+            if (confirm('회원 탈퇴를 최종 확인합니다.\n정말 탈퇴하시겠습니까?')) {
+              fetch('/user/delete', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  alert('회원 탈퇴가 완료되었습니다.');
+                  // 로그아웃 후 메인 페이지로 이동
+                  window.location.href = '/auth/logout';
+                } else {
+                  alert(data.message || '회원 탈퇴 중 오류가 발생했습니다.');
+                }
+              })
+              .catch(error => {
+                console.error('회원 탈퇴 오류:', error);
+                alert('회원 탈퇴 중 오류가 발생했습니다.');
+              });
+            }
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- 프로필 이미지 업로드 스크립트 -->
+  <script>
+    (function() {
+      const profileImageUpload = document.getElementById('profile-image-upload');
+      const profileAvatar = document.getElementById('profile-avatar');
+      
+      if (profileImageUpload) {
+        profileImageUpload.addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          
+          if (!file) return;
+          
+          // 이미지 파일인지 확인
+          if (!file.type.startsWith('image/')) {
+            alert('이미지 파일만 업로드할 수 있습니다.');
+            event.target.value = '';
+            return;
+          }
+          
+          // 파일 크기 확인 (5MB 제한)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('파일 크기는 5MB 이하여야 합니다.');
+            event.target.value = '';
+            return;
+          }
+          
+          // 미리보기 표시
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            if (profileAvatar) {
+              profileAvatar.style.backgroundImage = `url(${e.target.result})`;
+            }
+          };
+          reader.readAsDataURL(file);
+          
+          // FormData 생성
+          const formData = new FormData();
+          formData.append('profile_img', file);
+          
+          // AJAX로 업로드
+          fetch('/user/profile-image', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // 성공 시 페이지 새로고침하여 서버에서 업데이트된 이미지 표시
+              window.location.reload();
+            } else {
+              alert(data.message || '프로필 이미지 업로드에 실패했습니다.');
+              // 실패 시 원래 이미지로 복원
+              if (profileAvatar) {
+                profileAvatar.style.backgroundImage = 'url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>")';
+              }
+            }
+          })
+          .catch(error => {
+            console.error('프로필 이미지 업로드 오류:', error);
+            alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+            // 오류 시 원래 이미지로 복원
+            if (profileAvatar) {
+              profileAvatar.style.backgroundImage = 'url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>")';
+            }
+          });
         });
       }
     })();

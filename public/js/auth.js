@@ -102,12 +102,12 @@
           }
         }
         
-        // 비밀번호 길이 검사
+        // 비밀번호 길이 검사(입력시에는 검사하지 않음)
         const passwordInput = this.querySelector('input[name="password"]');
         if (passwordInput && passwordInput.value) {
           if (passwordInput.value.length < 6) {
             e.preventDefault();
-            Utils.showNotification('비밀번호는 최소 6자 이상이어야 합니다.', 'error');
+            Utils.showNotification('비밀번호 최소 6자 이상이어야 합니다.', 'error');
             passwordInput.focus();
             return false;
           }

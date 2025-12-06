@@ -103,10 +103,10 @@ const authController = {
                 });
             }
 
-            // 비밀번호 길이 확인 (최소 12자로 하자)
-            if (password.length < 12) {
+            // 비밀번호 길이 확인 (최소 6자로 하자)
+            if (password.length < 6) {
                 return res.render('auth/login', {
-                    error: '비밀번호는 최소 12자 이상이어야 합니다.',
+                    error: '비밀번호는 최소 6자 이상이어야 합니다.',
                     email: email,
                     showJoinForm: true  // 회원가입 폼 유지하기!
                 });
@@ -144,11 +144,13 @@ const authController = {
             // 2. Express가 GET /auth/login 요청 처리
             // 3. getLoginPage 함수에서 req.query.success로 메시지 읽기
             // 4. 뷰에 전달하여 화면에 표시
-            res.redirect('/auth/login?success=회원가입이 완료되었습니다. 로그인해주세요.');
+            return res.redirect('/auth/login?success=회원가입이 완료되었습니다. 로그인해주세요.');
 
         } catch (error) {
             console.error('회원가입 에러:', error);
-            res.render('auth/login', {
+            console.error('에러 상세:', error.message);
+            console.error('에러 스택:', error.stack);
+            return res.render('auth/login', {
                 error: '회원가입 중 오류가 발생했습니다.',
                 email: req.body.email || '',
                 showJoinForm: true  // 회원가입 폼 유지

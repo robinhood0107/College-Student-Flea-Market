@@ -102,7 +102,7 @@
                   <!-- 닉네임 입력 -->
                   <label class="auth-label">
                     <p class="auth-label-text">닉네임</p>
-                    <input class="auth-input" placeholder="닉네임을 입력하세요" type="text" name="nickname" required/>
+                    <input class="auth-input" placeholder="닉네임을 입력하세요" type="text" name="name" required/>
                   </label>
                   <!-- 이메일 입력 -->
                   <label class="auth-label">
@@ -139,7 +139,11 @@
                 </div>
                 <!-- 에러 메시지 -->
                 <div class="auth-error">
-                  <p class="auth-error-message" id="join-error-message"></p>
+                  <p class="auth-error-message" id="join-error-message">
+                    <% if (typeof error !== 'undefined' && error && typeof showJoinForm !== 'undefined' && showJoinForm) { %>
+                      <%= error %>
+                    <% } %>
+                  </p>
                 </div>
                 <!-- 완료/취소 버튼 -->
                 <div class="auth-form-actions">

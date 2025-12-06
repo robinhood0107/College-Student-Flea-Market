@@ -103,6 +103,11 @@
 
     if (!preview) return;
 
+    // 파일이 선택되지 않은 경우
+    if (files.length === 0) {
+      return;
+    }
+
     // 1장 제한
     if (files.length > 1) {
       alert("상품 이미지는 1장만 업로드할 수 있습니다.");
@@ -117,7 +122,7 @@
 
     const file = files[0];
 
-    if (!file.type.startsWith('image/')) {
+    if (!file || !file.type.startsWith('image/')) {
       alert("이미지 파일만 업로드할 수 있습니다.");
       event.target.value = "";
       return;

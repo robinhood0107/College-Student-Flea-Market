@@ -102,6 +102,13 @@
               <input class="auth-input" placeholder="예: 부산대학교" type="text" name="campus" value="<%= typeof user !== 'undefined' && user.campus ? user.campus : '' %>"/>
             </label>
             
+            <!-- 회원 탈퇴 버튼 -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e5e5;">
+              <button type="button" id="delete-account-btn" style="width: 100%; padding: 12px; background-color: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">
+                회원 탈퇴
+              </button>
+            </div>
+            
             <!-- 에러 메시지 -->
             <% if (typeof error !== 'undefined' && error) { %>
             <div class="auth-error">
