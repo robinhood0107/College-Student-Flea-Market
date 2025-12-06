@@ -63,7 +63,7 @@ exports.create = async (req, res) => {
         }
 
         await Product.create(
-            { seller_id, title, price, category, description, location },
+            { seller_id, title, price: parseInt(price), category, description, location },
             imagePath ? [imagePath] : []
         );
 
