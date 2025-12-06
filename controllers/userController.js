@@ -168,12 +168,17 @@ const userController = {
             req.logout((err) => {
                 if (err) {
                     console.error('로그아웃 오류:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        message: '회원 탈퇴 중 오류가 발생했습니다.' 
+                    });
                 }
-            });
-
-            return res.json({ 
-                success: true, 
-                message: '회원 탈퇴가 완료되었습니다.'
+                
+                // 로그아웃 완료 후 응답 전송
+                return res.json({ 
+                    success: true, 
+                    message: '회원 탈퇴가 완료되었습니다.'
+                });
             });
         } catch (error) {
             console.error('회원 탈퇴 에러:', error);
