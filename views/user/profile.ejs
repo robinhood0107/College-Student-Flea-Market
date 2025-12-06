@@ -182,6 +182,39 @@
           }
         });
       }
+      
+      // 회원 탈퇴 버튼 클릭 이벤트
+      const deleteAccountBtn = document.getElementById('delete-account-btn');
+      if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          if (confirm('정말로 회원 탈퇴를 하시겠습니까?\n탈퇴한 계정은 복구할 수 없습니다.')) {
+            if (confirm('회원 탈퇴를 최종 확인합니다.\n정말 탈퇴하시겠습니까?')) {
+              fetch('/user/delete', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  alert('회원 탈퇴가 완료되었습니다.');
+                  // 로그아웃 후 메인 페이지로 이동
+                  window.location.href = '/auth/logout';
+                } else {
+                  alert(data.message || '회원 탈퇴 중 오류가 발생했습니다.');
+                }
+              })
+              .catch(error => {
+                console.error('회원 탈퇴 오류:', error);
+                alert('회원 탈퇴 중 오류가 발생했습니다.');
+              });
+            }
+          }
+        });
+      }
     })();
   </script>
 

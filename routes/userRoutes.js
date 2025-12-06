@@ -12,4 +12,7 @@ router.post('/edit', userController.update);
 // POST /user/profile-image - 프로필 이미지 업로드
 router.post('/profile-image', upload.single('profile_img'), userController.uploadProfileImage);
 
+// POST /user/delete - 회원 탈퇴 처리
+router.post('/delete', userController.delete);
+
 module.exports = router;
