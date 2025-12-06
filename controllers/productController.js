@@ -98,7 +98,7 @@ exports.getEditPage = async (req, res) => {
         return res.render('product/write', { product });
     } catch (error) {
         console.error("상품 수정 페이지 오류:", error);
-        res.status(500).send("상품 수정 페이지 로드 중 오류 발생");
+        return res.status(500).send("상품 수정 페이지 로드 중 오류 발생");
     }
 };
 
@@ -150,7 +150,7 @@ exports.update = async (req, res) => {
         return res.redirect(`/product/${id}`);
     } catch (error) {
         console.error("상품 수정 오류:", error);
-        res.status(500).send("상품 수정 중 오류 발생");
+        return res.status(500).send("상품 수정 중 오류 발생");
     }
 };
 
