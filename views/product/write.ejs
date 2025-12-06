@@ -12,6 +12,7 @@
       <!-- 메인 콘텐츠 -->
       <main class="px-10 flex flex-1 justify-center py-5">
         <div class="layout-content-container flex flex-col w-full max-w-4xl flex-1 gap-8">
+
           <!-- 페이지 제목 -->
           <div class="page-header">
             <div class="page-header-content">
@@ -19,104 +20,139 @@
               <p class="page-subtitle">판매할 상품의 정보를 정확하게 입력해주세요.</p>
             </div>
           </div>
+
+          <!-- 상품 등록 폼 -->
           <form id="product-form" action="/product/write" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
+
             <!-- 상품 이미지 업로드 섹션 -->
             <div class="flex flex-col gap-4">
-              <h2 class="text-main text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-0 pt-5">상품 이미지</h2>
-              <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal pb-3 pt-1 px-4">최대 10장의 이미지를 업로드할 수 있습니다. 첫 번째 이미지가 대표 이미지로 사용됩니다.</p>
+              <h2 class="text-main text-[22px] font-bold px-4 pb-0 pt-5">상품 이미지</h2>
+              <p class="text-slate-600 dark:text-slate-400 text-base pb-3 pt-1 px-4">
+                판매할 상품의 이미지를 올려주세요.
+              </p>
+
               <!-- 이미지 업로드 영역 -->
               <div class="flex flex-col p-4">
-                <div class="upload-dropzone flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-700 px-6 py-14">
+                <div class="upload-dropzone flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-slate-300 px-6 py-14">
                   <div class="flex max-w-[480px] flex-col items-center gap-2">
-                    <p class="text-main text-lg font-bold leading-tight tracking-[-0.015em] max-w-[480px] text-center">드래그 앤 드롭 또는 파일 선택</p>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-normal max-w-[480px] text-center">판매할 상품의 사진을 추가하세요</p>
+                    <p class="text-main text-lg font-bold text-center">드래그 앤 드롭 또는 파일 선택</p>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm text-center">판매할 상품의 사진을 추가하세요</p>
                   </div>
+
                   <!-- 파일 선택 버튼 -->
-                  <input type="file" name="images" multiple accept="image/*" id="image-upload" class="hidden"/>
-                  <label for="image-upload" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-slate-200 dark:bg-slate-800 text-main text-sm font-bold leading-normal tracking-[0.015em]">
+                  <input type="file" name="image" accept="image/*" id="image-upload" class="hidden"/>
+                  <label for="image-upload" class="flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-200 text-main text-sm font-bold">
                     <span class="truncate">파일 선택</span>
                   </label>
                 </div>
               </div>
+
               <!-- 업로드된 이미지 미리보기 -->
               <div class="image-preview-section">
                 <div class="image-preview-header">
                   <p class="image-preview-count">
-                    <span id="image-count">0</span> / 10
+                    <span id="image-count">0</span> / 1
                   </p>
                 </div>
-                <div class="image-preview-container" id="image-preview">
-                  <!-- 이미지 미리보기는 JavaScript로 동적 추가 -->
-                </div>
+                <div class="image-preview-container" id="image-preview"></div>
               </div>
             </div>
+
             <div class="w-full border-t border-main my-4"></div>
-            <!-- 기본 정보 입력 폼 -->
+
+            <!-- 기본 정보 입력 -->
             <div class="flex flex-col gap-4">
-              <h2 class="text-main text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">기본 정보</h2>
+              <h2 class="text-main text-[22px] font-bold px-4 pb-3 pt-5">기본 정보</h2>
+
               <div class="flex flex-col gap-6 px-4">
-                <!-- 상품명 입력 -->
+
+                <!-- 상품명 -->
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="product-title">상품명 <span class="text-red-500">*</span></label>
-                  <input class="form-input w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500" id="product-title" name="title" placeholder="상품명을 입력하세요" type="text" required value="<%= typeof product !== 'undefined' && product ? product.title : '' %>"/>
+                  <label class="text-sm font-medium">상품명 <span class="text-red-500">*</span></label>
+                  <input class="form-input w-full rounded-lg" id="product-title" name="title" placeholder="상품명을 입력하세요" type="text" required />
                 </div>
-                <!-- 카테고리 선택 -->
+
+                <!-- 카테고리 -->
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="category">카테고리 <span class="text-red-500">*</span></label>
-                  <select class="form-select w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main" id="category" name="category" required>
+                  <label class="text-sm font-medium">카테고리 <span class="text-red-500">*</span></label>
+                  <select class="form-select w-full rounded-lg" id="category" name="category" required>
                     <option value="">카테고리를 선택하세요</option>
-                    <option value="디지털기기" <%= typeof product !== 'undefined' && product && product.category === '디지털기기' ? 'selected' : '' %>>디지털기기</option>
-                    <option value="생활가전" <%= typeof product !== 'undefined' && product && product.category === '생활가전' ? 'selected' : '' %>>생활가전</option>
-                    <option value="가구/인테리어" <%= typeof product !== 'undefined' && product && product.category === '가구/인테리어' ? 'selected' : '' %>>가구/인테리어</option>
-                    <option value="의류" <%= typeof product !== 'undefined' && product && product.category === '의류' ? 'selected' : '' %>>의류</option>
+                    <option value="디지털기기">디지털기기</option>
+                    <option value="생활가전">생활가전</option>
+                    <option value="가구/인테리어">가구/인테리어</option>
+                    <option value="의류">의류</option>
                   </select>
                 </div>
-                <!-- 가격 입력 -->
+
+                <!-- 가격 -->
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="price">가격 <span class="text-red-500">*</span></label>
-                  <div class="relative">
-                    <input class="form-input w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-4 pr-10" id="price" name="price" placeholder="가격을 숫자로 입력하세요" type="number" min="0" required value="<%= typeof product !== 'undefined' && product ? product.price : '' %>"/>
-                    <span class="absolute inset-y-0 right-4 flex items-center text-sub">원</span>
-                  </div>
-                  <p class="text-xs text-red-600 mt-1 hidden" id="price-error">가격은 숫자만 입력 가능합니다.</p>
+                  <label class="text-sm font-medium">가격 <span class="text-red-500">*</span></label>
+                  <input class="form-input w-full rounded-lg" id="price" name="price" placeholder="가격을 입력하세요" type="number" min="0" required />
                 </div>
-                <!-- 거래 희망 장소 입력 -->
+
+                <!-- 거래 희망 장소 -->
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="location">거래 희망 장소</label>
-                  <input class="form-input w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500" id="location" name="location" placeholder="예: 부산광역시 금정구" type="text" value="<%= typeof product !== 'undefined' && product ? product.location : '' %>"/>
+                  <label class="text-sm font-medium">거래 희망 장소</label>
+                  <input class="form-input w-full rounded-lg" id="location" name="location" placeholder="예: 부산광역시 금정구" type="text" />
                 </div>
-                <!-- 상품 설명 입력 -->
+
+                <!-- 상품 설명 -->
                 <div class="flex flex-col gap-2">
-                  <label class="text-sm font-medium text-slate-800 dark:text-slate-200" for="description">상품 설명 <span class="text-red-500">*</span></label>
-                  <textarea class="form-textarea w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-main placeholder:text-slate-400 dark:placeholder:text-slate-500" id="description" name="description" placeholder="상품에 대한 설명을 자세하게 입력해주세요. (예: 구매 시기, 사용감, 특징 등)" rows="6" required><%= typeof product !== 'undefined' && product ? product.description : '' %></textarea>
+                  <label class="text-sm font-medium">상품 설명 <span class="text-red-500">*</span></label>
+                  <textarea class="form-textarea w-full rounded-lg" id="description" name="description" placeholder="상품 설명을 입력하세요" rows="6" required></textarea>
                 </div>
+
               </div>
             </div>
+
           </form>
-          </div>
-        </main>
-        <!-- 푸터 -->
-        <footer class="form-footer">
-          <div class="form-footer-content">
-            <!-- 취소 버튼 -->
-            <a href="/product/list" class="btn btn-secondary btn-lg">
-              <span class="truncate">취소</span>
-            </a>
-            <!-- 등록하기 버튼 -->
-            <button type="submit" form="product-form" class="btn btn-primary btn-lg">
-              <span class="truncate">등록하기</span>
-            </button>
-          </div>
-        </footer>
-      </div>
+        </div>
+      </main>
+
+      <!-- 푸터 -->
+      <footer class="form-footer">
+        <div class="form-footer-content">
+          <a href="/product/list" class="btn btn-secondary btn-lg">취소</a>
+          <button type="submit" form="product-form" class="btn btn-primary btn-lg">등록하기</button>
+        </div>
+      </footer>
+
     </div>
   </div>
-      <%- include('../partials/footer') %>
-    </div>
-  </div>
-  
-  <!-- 상품 관련 JavaScript -->
-  <script src="/js/product.js"></script>
+
+  <%- include('../partials/footer') %>
+
+  <!-- 단일 이미지 제한 스크립트 -->
+  <script>
+    document.getElementById("image-upload").addEventListener("change", function(event) {
+      const files = event.target.files;
+
+      // 여러 장 선택 시 차단
+      if (files.length > 1) {
+        alert("상품 이미지는 1장만 업로드할 수 있습니다.");
+        event.target.value = ""; // 파일 초기화
+        document.getElementById("image-count").textContent = "0";
+        document.getElementById("image-preview").innerHTML = "";
+        return;
+      }
+
+      // 미리보기
+      const preview = document.getElementById("image-preview");
+      preview.innerHTML = ""; 
+
+      if (files.length === 1) {
+        document.getElementById("image-count").textContent = "1";
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(files[0]);
+        img.className = "preview-image";
+        img.style.width = "120px";
+        img.style.height = "120px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "8px";
+        preview.appendChild(img);
+      }
+    });
+  </script>
+
 </body>
 </html>
-

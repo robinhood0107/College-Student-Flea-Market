@@ -17,8 +17,7 @@
  * 
  * 1. 이미지 업로드 및 미리보기 (프론트엔드 전용)
  *    - #image-upload 파일 선택 시 미리보기 표시
- *    - 드래그 앤 드롭 지원 (.upload-dropzone)
- *    - 최대 10개 파일, 5MB 제한
+ *    - 제품이미지 한개 파일 업로드
  *    - 이미지 파일만 허용
  *    - 실제 업로드는 HTML 폼 제출 시 서버에서 처리
  *    ⚠️ 백엔드 구현 필요: routes/productRoutes.js, controllers/productController.js, middlewares/upload.js
@@ -101,70 +100,48 @@
   function handleImageUpload(event) {
     const files = event.target.files;
     const preview = document.getElementById('image-preview');
-    
+
     if (!preview) return;
-    
-    // 현재 이미지 개수 확인
-    const currentCount = preview.children.length;
-    const remainingSlots = 10 - currentCount;
-    
-    if (remainingSlots <= 0) {
-      Utils.showNotification('최대 10장까지만 업로드할 수 있습니다.', 'error');
+
+    // 1장 제한
+    if (files.length > 1) {
+      alert("상품 이미지는 1장만 업로드할 수 있습니다.");
+      event.target.value = "";
+      preview.innerHTML = "";
+      document.getElementById("image-count").textContent = "0";
       return;
     }
-    
-    // 최대 10개까지만 처리 (현재 개수 고려)
-    const maxFiles = Math.min(files.length, remainingSlots);
-    
-    if (files.length > remainingSlots) {
-      Utils.showNotification(`${remainingSlots}장만 추가됩니다. (최대 10장)`, 'info');
+
+    // 기존 이미지 제거 후 새 이미지 추가
+    preview.innerHTML = "";
+
+    const file = files[0];
+
+    if (!file.type.startsWith('image/')) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      event.target.value = "";
+      return;
     }
-    
-    let processedCount = 0;
-    
-    for (let i = 0; i < files.length && processedCount < maxFiles; i++) {
-      const file = files[i];
-      
-      // 이미지 파일인지 확인
-      if (!file.type.startsWith('image/')) {
-        Utils.showNotification(`${file.name}은(는) 이미지 파일이 아닙니다.`, 'error');
-        continue;
-      }
-      
-      // 파일 크기 확인 (5MB 제한)
-      if (file.size > 5 * 1024 * 1024) {
-        Utils.showNotification(`${file.name} 파일이 너무 큽니다. (최대 5MB)`, 'error');
-        continue;
-      }
-      
-      const reader = new FileReader();
-      
-      reader.onload = function(e) {
-        const div = document.createElement('div');
-        div.className = 'preview-image-wrapper';
-        
-        // 첫 번째 이미지인 경우 대표 이미지 표시
-        const isFirst = preview.children.length === 0;
-        
-        div.innerHTML = `
-          <img class="preview-image" src="${e.target.result}" alt="미리보기 이미지" />
-          ${isFirst ? '<span class="preview-main-badge">대표</span>' : ''}
-          <button type="button" class="preview-remove-button" onclick="removePreviewImage(this)" aria-label="이미지 제거">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        `;
-        
-        preview.appendChild(div);
-        updateImageCount();
-        processedCount++;
-      };
-      
-      reader.onerror = function() {
-        Utils.showNotification('이미지 읽기 오류가 발생했습니다.', 'error');
-      };
-      
-      reader.readAsDataURL(file);
-    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      const div = document.createElement('div');
+      div.className = 'preview-image-wrapper';
+
+      div.innerHTML = `
+        <img class="preview-image" src="${e.target.result}" alt="미리보기 이미지" />
+        <span class="preview-main-badge">대표</span>
+        <button type="button" class="preview-remove-button" onclick="removePreviewImage(this)">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      `;
+
+      preview.appendChild(div);
+      document.getElementById("image-count").textContent = "1";
+    };
+
+    reader.readAsDataURL(file);
   }
   
   /**
@@ -172,25 +149,15 @@
    * @param {HTMLElement} button - 제거 버튼 요소
    */
   window.removePreviewImage = function(button) {
-    const wrapper = button.closest('.preview-image-wrapper');
-    if (wrapper) {
-      wrapper.remove();
-      updateImageCount();
-      
-      // 첫 번째 이미지가 제거되면 다음 이미지에 대표 뱃지 추가
-      const preview = document.getElementById('image-preview');
-      if (preview && preview.children.length > 0) {
-        const firstWrapper = preview.children[0];
-        const existingBadge = firstWrapper.querySelector('.preview-main-badge');
-        if (!existingBadge) {
-          const badge = document.createElement('span');
-          badge.className = 'preview-main-badge';
-          badge.textContent = '대표';
-          firstWrapper.appendChild(badge);
-        }
-      }
-    }
-  };
+  const wrapper = button.closest('.preview-image-wrapper');
+  if (wrapper) {
+    wrapper.remove();
+    document.getElementById("image-count").textContent = "0";
+
+    const imageUpload = document.getElementById('image-upload');
+    if (imageUpload) imageUpload.value = "";
+  }
+};
   
   // 이미지 업로드 입력 필드에 이벤트 리스너 연결
   document.addEventListener('DOMContentLoaded', function() {
@@ -259,53 +226,44 @@
    * @param {HTMLElement} button - 찜하기 버튼 요소
    */
   async function toggleLike(productId, button) {
-    if (!productId) {
-      Utils.showNotification('상품 ID가 없습니다.', 'error');
-      return;
-    }
-    
     try {
-      const response = await fetch(`/api/product/${productId}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'same-origin'
+      const res = await fetch(`/product/${productId}/like`, {
+        method: "POST"
       });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        // 버튼 상태 업데이트
-        const icon = button.querySelector('.material-symbols-outlined');
-        if (icon) {
-          if (data.liked) {
-            icon.textContent = 'favorite';
-            icon.style.fontVariationSettings = "'FILL' 1";
-            button.classList.add('liked');
-          } else {
-            icon.textContent = 'favorite_border';
-            icon.style.fontVariationSettings = "'FILL' 0";
-            button.classList.remove('liked');
-          }
-        }
-        
-        // 찜 개수 업데이트
-        const likeCountElement = document.querySelector('.like-count');
-        if (likeCountElement) {
-          likeCountElement.textContent = data.likeCount || 0;
-        }
-        
-        Utils.showNotification(
-          data.liked ? '찜 목록에 추가되었습니다.' : '찜 목록에서 제거되었습니다.',
-          'success'
-        );
-      } else {
-        throw new Error(data.message || '찜하기 처리 중 오류가 발생했습니다.');
+
+      const data = await res.json();
+
+      if (!data.success) {
+        alert(data.message || "찜하기 오류");
+
+        return;
       }
-    } catch (error) {
-      console.error('찜하기 오류:', error);
-      Utils.showNotification(error.message || '찜하기 처리 중 오류가 발생했습니다.', 'error');
+
+      // UI 아이콘 업데이트
+      const icon = button.querySelector(".material-symbols-outlined");
+
+      if (data.liked) {
+        icon.textContent = "favorite";
+        icon.style.fontVariationSettings = "'FILL' 1";
+        button.classList.add("liked");
+      } else {
+        icon.textContent = "favorite_border";
+        icon.style.fontVariationSettings = "'FILL' 0";
+        button.classList.remove("liked");
+      }
+
+      // 찜 개수 업데이트
+      const productCard = button.closest(".product-card");
+      if (productCard) {
+        const likeCountEl = productCard.querySelector(".like-count");
+        if (likeCountEl) {
+          likeCountEl.textContent = data.likeCount ?? 0;
+        }
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("찜하기 오류");
     }
   }
   
@@ -394,11 +352,9 @@
     
     // 라디오 버튼 변경 시 즉시 AJAX로 처리 (선택사항)
     statusRadios.forEach(radio => {
-      radio.addEventListener('change', function() {
-        const productId = window.location.pathname.split('/').pop();
-        const status = this.value;
-        // 즉시 상태 변경 (선택사항 - 필요시 주석 해제)
-        // updateProductStatus(parseInt(productId), status);
+    radio.addEventListener("change", function() {
+      const productId = window.location.pathname.split("/")[2];
+      updateProductStatus(productId, this.value);
       });
     });
   });

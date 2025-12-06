@@ -417,3 +417,31 @@
 .dark .form-button-secondary:hover {
   background-color: var(--color-bg-slate-700);
 }
+
+
+.product-status-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+}
+
+/* 상태: 판매중 → 초록색 */
+.status-sale {
+  background-color: #14532d!important;
+}
+
+/* 상태: 거래중 → 노란색 */
+.status-reserved {
+  background-color: #a38301!important;
+  color: #333;
+}
+
+/* 상태: 판매완료 → 회색 */
+.status-sold {
+  background-color: #9ca3af!important;
+}

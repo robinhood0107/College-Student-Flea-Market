@@ -456,6 +456,10 @@
   color: #86efac;
 }
 
+.product-status-badge {
+  color: #ffffff !important;
+}
+
 .product-info {
   display: flex;
   flex-direction: column;
@@ -758,6 +762,8 @@
   box-shadow: var(--shadow-sm);
 }
 
+
+
 .dark .status-radio-label:has(input[type="radio"]:checked) {
   background-color: var(--color-bg-slate-700);
   color: #ffffff;
@@ -773,6 +779,25 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* 선택 상태에서 span 배경 제거 */
+.status-radio-label input[type="radio"]:checked + span {
+  background-color: transparent !important;
+}
+
+/* 선택된 라벨 전체 강조 */
+.status-radio-label:has(input[type="radio"]:checked) {
+  background-color: #ffffff !important;
+  color: var(--color-primary) !important;
+  border: 1px solid var(--color-primary);
+}
+
+/* 다크 모드 라벨 강조 */
+.dark .status-radio-label:has(input[type="radio"]:checked) {
+  background-color: var(--color-bg-slate-700) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--color-primary);
 }
 
 .action-button {

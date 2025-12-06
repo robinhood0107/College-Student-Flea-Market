@@ -34,8 +34,16 @@
     </div>
     <!-- 로그인 상태에 따른 버튼 분기 -->
     <% if (user) { %>
-      <!-- 로그인된 경우: 상품 등록, 마이페이지, 로그아웃 버튼 -->
       <div class="header-buttons">
+
+        <!-- 🟦 관리자 계정: 관리자 페이지 버튼 -->
+        <% if (user.isAdmin === 1 || user.isAdmin === true) { %>
+          <a href="/admin/dashboard" class="btn btn-secondary">
+            <span class="truncate">관리자 페이지</span>
+          </a>
+        <% } %>
+
+        <!-- 일반 버튼들 -->
         <a href="/product/write" class="btn btn-primary">
           <span class="truncate">상품 등록</span>
         </a>
