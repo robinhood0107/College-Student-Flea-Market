@@ -50,18 +50,29 @@
                 <div class="seller-profile">
                   <div class="seller-info">
                     <!-- 판매자 프로필 이미지 -->
-                    <div class="seller-avatar" style='background-image: url("<%= typeof product !== 'undefined' && product.seller && product.seller.profile_img ? product.seller.profile_img : '/uploads/default.jpg' %>");'></div>
+                    <div class="seller-avatar" style='background-image: url("<%= typeof seller !== 'undefined' && seller && seller.profile_img ? seller.profile_img : '/uploads/default.jpg' %>");'></div>
                     <!-- 판매자 정보 -->
-                    <div>
-                      <p class="seller-name"><%= typeof product !== 'undefined' && product.seller ? product.seller.nickname : '판매자' %></p>
+                    <div style="flex: 1;">
+                      <p class="seller-name"><%= typeof seller !== 'undefined' && seller ? seller.nickname : '판매자' %></p>
                       <p class="seller-verified">University Student</p>
                     </div>
+                    <!-- 게시물 삭제 버튼 (판매자만 표시) -->
+                    <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller_id === user.id) { %>
+                    <button 
+                      class="product-delete-btn" 
+                      onclick="deleteProduct(<%= product.id %>)"
+                      style="background-color: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; font-weight: 500; transition: background-color 0.2s;"
+                      onmouseover="this.style.backgroundColor='#dc2626'"
+                      onmouseout="this.style.backgroundColor='#ef4444'"
+                    >
+                      게시물 삭제
+                    </button>
+                    <% } %>
                   </div>
-                  <!-- 수정/삭제 버튼 -->
-                  <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller && user.id === product.seller.id) { %>
+                  <!-- 수정 버튼 (판매자만 표시) -->
+                  <% if (typeof user !== 'undefined' && user && typeof product !== 'undefined' && product.seller_id === user.id) { %>
                   <div class="action-buttons">
                     <a href="/product/<%= product.id %>/edit" class="action-btn action-btn-edit">수정</a>
-                    <button class="action-btn action-btn-delete" onclick="deleteProduct(<%= product.id %>)">삭제</button>
                   </div>
                   <% } %>
                 </div>
