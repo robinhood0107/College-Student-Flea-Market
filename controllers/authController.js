@@ -103,10 +103,10 @@ const authController = {
                 });
             }
 
-            // 비밀번호 길이 확인 (최소 12자로 하자)
-            if (password.length < 12) {
+            // 비밀번호 길이 확인 (최소 6자로 하자)
+            if (password.length < 6) {
                 return res.render('auth/login', {
-                    error: '비밀번호는 최소 12자 이상이어야 합니다.',
+                    error: '비밀번호는 최소 6자 이상이어야 합니다.',
                     email: email,
                     showJoinForm: true  // 회원가입 폼 유지하기!
                 });

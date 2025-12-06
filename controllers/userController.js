@@ -89,9 +89,9 @@ const userController = {
             
             // 비밀번호 검증
             if (password) {
-                // 비밀번호 길이 확인 (최소 12자)
-                if (password.length < 12) {
-                    return res.redirect('/user/profile?error=비밀번호는 최소 12자 이상이어야 합니다.');
+                // 비밀번호 길이 확인 (최소 6자)
+                if (password.length < 6) {
+                    return res.redirect('/user/profile?error=비밀번호는 최소 6자 이상이어야 합니다.');
                 }
                 // 비밀번호 일치 확인
                 if (password !== passwordConfirm) {
