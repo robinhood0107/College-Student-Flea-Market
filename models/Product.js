@@ -16,9 +16,9 @@ const Product = {
      * 파라미터로 {Object} filters - 필터 옵션 { category?, keyword?, status?, limit?, offset? }
      * 반환값으로 {Promise<Array>} 상품 배열 (이미지 포함)
      */
-    async findAll(filters = {}) {
-        const { category, keyword, status = 'FOR_SALE', limit = 20, offset = 0 } = filters;
-        
+async findAll(filters = {}, userId = null) {
+        const { category, keyword, status, limit = 20, offset = 0 } = filters;
+
         let query = `
             SELECT 
                 p.id,
@@ -32,14 +32,17 @@ const Product = {
                 p.created_at,
                 u.nickname as seller_nickname,
                 (SELECT COUNT(*) FROM likes WHERE product_id = p.id) as like_count,
-                (SELECT image_path FROM product_images WHERE product_id = p.id LIMIT 1) as thumbnail
+                (SELECT image_path FROM product_images WHERE product_id = p.id LIMIT 1) as thumbnail,
+                ${userId ? '(SELECT COUNT(*) FROM likes WHERE product_id = p.id AND user_id = ?) as is_liked' : '0 as is_liked'}
             FROM products p
             LEFT JOIN users u ON p.seller_id = u.id
             WHERE 1=1
-        `;
-        
+        `;      
         const params = [];
-        
+        // userId가 존재할 경우, SELECT 부분의 첫 번째 ? 를 채움
+        if (userId) {
+            params.push(userId);
+        }
         // 동적 WHERE 절 생성 (SQL Injection 방지)
         if (category) {
             query += ' AND p.category = ?';
@@ -49,8 +52,8 @@ const Product = {
             // Full-Text 인덱스 사용 (MATCH ... AGAINST)
             // IN BOOLEAN MODE: AND, OR, +, - 등 연산자 사용 가능
             // 예: '맥북 -중고' (맥북은 포함, 중고는 제외)
-            query += ' AND MATCH(p.title, p.description) AGAINST(? IN BOOLEAN MODE)';
-            params.push(keyword);
+            query += ' AND (p.title LIKE ? OR p.description LIKE ?)';
+            params.push(`%${keyword}%`, `%${keyword}%`);
         }
         if (status) {
             query += ' AND p.status = ?';
@@ -222,7 +225,7 @@ const Product = {
     /**
      * 찜하기 추가/제거 (토글)
      * 파라미터로 {number} userId - 사용자 ID
-     * 파라미터로 {number} productId - 상품 ID
+     * 파라미터로 {number}   - 상품 ID
      * 반환값으로 {Promise<boolean>} 찜하기 상태 (true: 추가됨, false: 제거됨)
      */
     async toggleLike(userId, productId) {
@@ -248,6 +251,16 @@ const Product = {
             return true;
         }
     },
+
+        async countLikes(productId) {
+        const [rows] = await db.query(
+            'SELECT COUNT(*) AS count FROM likes WHERE product_id = ?',
+            [productId]
+        );
+        return rows[0].count;
+    },
+
+    
 
     /**
      * 사용자가 찜한 상품 목록 조회

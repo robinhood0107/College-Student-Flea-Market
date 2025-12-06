@@ -21,15 +21,29 @@
           </div>
           <!-- 카테고리 필터 -->
           <div class="category-filter">
-            <a href="/product/list" class="category-button category-button-active">
+
+            <% const categories = [
+              { en: "Electronics", ko: "디지털기기" },
+              { en: "Books", ko: "도서" },
+              { en: "Furniture", ko: "가구/인테리어" },
+              { en: "Dorm Essentials", ko: "생활가전" },
+              { en: "Clothing", ko: "의류" }
+            ]; %>
+
+            <!-- ALL 버튼 -->
+            <a href="/product/list"
+              class="category-button <%= !category ? 'category-button-active' : 'category-button-inactive' %>">
               <p>All</p>
             </a>
-            <% const categories = ['Electronics', 'Books', 'Furniture', 'Dorm Essentials', 'Clothing']; %>
-            <% categories.forEach(category => { %>
-            <a href="/product/list?category=<%= encodeURIComponent(category) %>" class="category-button category-button-inactive">
-              <p><%= category %></p>
-            </a>
+
+            <!-- 카테고리들 -->
+            <% categories.forEach(cat => { %>
+              <a href="/product/list?category=<%= encodeURIComponent(cat.en) %>"
+                class="category-button <%= category === cat.ko ? 'category-button-active' : 'category-button-inactive' %>">
+                <p><%= cat.en %></p>
+              </a>
             <% }); %>
+
           </div>
           <!-- 정렬 버튼 -->
           <div class="sort-section">
@@ -49,9 +63,20 @@
                 <a href="/product/<%= product.id %>" class="product-card-link">
                   <div class="product-image-wrapper">
                     <!-- 상품 이미지 -->
-                    <div class="product-image" style='background-image: url("<%= product.main_image || '/uploads/default.jpg' %>");'></div>
+                    <div class="product-image" style='background-image: url("<%= product.thumbnail || '/uploads/default.jpg' %>");'></div>
                     <!-- 상품 상태 뱃지 -->
-                    <span class="product-status-badge"><%= product.status === 'FOR_SALE' ? '판매중' : product.status === 'RESERVED' ? '예약중' : '판매완료' %></span>
+                    <span class="product-status-badge 
+                          <%= product.status === 'FOR_SALE' 
+                                ? 'status-sale' 
+                                : product.status === 'RESERVED' 
+                                ? 'status-reserved' 
+                                : 'status-sold' %>">
+                      <%= product.status === 'FOR_SALE'
+                          ? '판매중'
+                          : product.status === 'RESERVED'
+                          ? '예약중'
+                          : '판매완료' %>
+                    </span>
                   </div>
                   <div>
                     <div class="flex items-center gap-2">
@@ -71,10 +96,13 @@
                     </div>
                   </div>
                 </a>
-                <!-- 찜하기 버튼 (로그인한 사용자만 표시) -->
-                <% if (typeof user !== 'undefined' && user) { %>
+                <!-- 찜하기 버튼 (로그인한 사용자 그리고 본인 제품이 아닌 제품에만 보이기) -->
+                <% if (user && product.seller_id !== user.id) { %>
                 <button class="like-button" data-like-product="<%= product.id %>" type="button" aria-label="찜하기">
-                  <span class="material-symbols-outlined">favorite_border</span>
+                  <span class="material-symbols-outlined"
+                        style="font-variation-settings: 'FILL' <%= product.is_liked ? 1 : 0 %>;">
+                      <%= product.is_liked ? 'favorite' : 'favorite_border' %>
+                  </span>
                 </button>
                 <% } %>
               </div>
@@ -89,6 +117,9 @@
       </main>
     </div>
       <%- include('../partials/footer') %>
+
+      <!-- 상품 관련 JS -->
+      <script src="/js/product.js"></script>
     </div>
   </div>
 </body>

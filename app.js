@@ -6,21 +6,27 @@ const MySQLStore = require('express-mysql-session')(session);
 const passport = require('passport');
 const dotenv = require('dotenv');
 
+
+
+
+
 // 환경 변수 로드
 dotenv.config();
 
 // Express 앱 생성
 const app = express();
-
+ 
 //여기부터 미들웨어 만드는 것
 
-// 로깅 미들웨어 dev에만 적용
+// 로깅 미들웨어 dev에만 적용 
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
 // 정적 파일 제공 (public 폴더)
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // 요청 본문 파싱 미들웨어
 app.use(express.json()); // JSON 형식의 요청 본문 파싱 (AJAX 요청용)

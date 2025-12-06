@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const upload = require('../middlewares/upload');
+
+ 
 
 // GET /product/list - 상품 목록 페이지
 router.get('/list', productController.list || ((req, res) => {
@@ -13,9 +16,8 @@ router.get('/write', productController.getWritePage || ((req, res) => {
 }));
 
 // POST /product/write - 상품 등록 처리
-router.post('/write', productController.create || ((req, res) => {
-    res.redirect('/product/list');
-}));
+router.post('/write', upload.single('image'), productController.create);
+
 
 // GET /product/:id/edit - 상품 수정 페이지
 router.get('/:id/edit', productController.getEditPage || ((req, res) => {
@@ -28,9 +30,7 @@ router.post('/:id/edit', productController.update || ((req, res) => {
 }));
 
 // POST /product/:id/status - 상품 상태 변경
-router.post('/:id/status', productController.updateStatus || ((req, res) => {
-    res.redirect(`/product/${req.params.id}`);
-}));
+router.post('/:id/status', productController.updateStatus);
 
 // POST /product/:id/comment - 댓글 작성
 router.post('/:id/comment', productController.createComment || ((req, res) => {
