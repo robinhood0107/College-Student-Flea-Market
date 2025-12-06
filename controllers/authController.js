@@ -151,7 +151,7 @@ const authController = {
             console.error('에러 상세:', error.message);
             console.error('에러 스택:', error.stack);
             return res.render('auth/login', {
-                error: '회원가입 중 오류가 발생했습니다. ' + (error.message || ''),
+                error: '회원가입 중 오류가 발생했습니다.',
                 email: req.body.email || '',
                 showJoinForm: true  // 회원가입 폼 유지
             });
