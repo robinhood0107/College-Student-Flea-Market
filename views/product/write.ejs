@@ -126,7 +126,7 @@
 
   <%- include('../partials/footer') %>
 
-  <!-- 단일 이미지 제한 스크립트 -->
+  <script src="/js/product.js"></script>
   <script>
     // 수정 모드에서 기존 이미지 정보 저장
     <% if (typeof product !== 'undefined' && product && product.images && product.images.length > 0) { %>
@@ -138,46 +138,35 @@
     const existingImage = null;
     <% } %>
 
-    document.getElementById("image-upload").addEventListener("change", function(event) {
-      const files = event.target.files;
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageUpload = document.getElementById('image-upload');
+      if (!imageUpload) return;
 
-      // 여러 장 선택 시 차단
-      if (files.length > 1) {
-        alert("상품 이미지는 1장만 업로드할 수 있습니다.");
-        event.target.value = ""; // 파일 초기화
+      imageUpload.addEventListener('change', function(event) {
+        const files = event.target.files;
         
-        // 수정 모드에서 기존 이미지가 있으면 복원, 없으면 초기화
-        const preview = document.getElementById("image-preview");
-        if (existingImage) {
-          // 기존 이미지 복원
-          preview.innerHTML = existingImage.html;
-          document.getElementById("image-count").textContent = "1";
-        } else {
-          preview.innerHTML = "";
-          document.getElementById("image-count").textContent = "0";
+        // 여러 장 선택 시 기존 이미지 복원 (product.js가 이미 에러 처리해서 그렇다)
+        if (files.length > 1 && existingImage) {
+          setTimeout(() => {
+            const preview = document.getElementById("image-preview");
+            if (preview && preview.innerHTML === "") {
+              preview.innerHTML = existingImage.html;
+              document.getElementById("image-count").textContent = "1";
+            }
+          }, 100);
         }
-        return;
-      }
 
-      // 미리보기
-      const preview = document.getElementById("image-preview");
-      preview.innerHTML = ""; 
-
-      if (files.length === 1) {
-        document.getElementById("image-count").textContent = "1";
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(files[0]);
-        img.className = "preview-image";
-        img.style.width = "120px";
-        img.style.height = "120px";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "8px";
-        preview.appendChild(img);
-      } else if (existingImage) {
-        // 파일 선택 취소 시 기존 이미지 복원 (수정 모드)
-        preview.innerHTML = existingImage.html;
-        document.getElementById("image-count").textContent = "1";
-      }
+        // 수정 모드에서 파일 선택 취소 시 기존 이미지 복원하는 것!
+        if (files.length === 0 && existingImage) {
+          setTimeout(() => {
+            const preview = document.getElementById("image-preview");
+            if (preview && preview.innerHTML === "") {
+              preview.innerHTML = existingImage.html;
+              document.getElementById("image-count").textContent = "1";
+            }
+          }, 100);
+        }
+      });
     });
     
     // 수정 모드일 때 기존 이미지가 있으면 카운트 표시
