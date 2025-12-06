@@ -17,7 +17,7 @@
             <div class="profile-content">
               <div class="profile-info">
                 <label for="profile-image-upload" style="cursor: pointer; position: relative; display: inline-block;">
-                  <div class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
+                  <div id="profile-avatar" class="profile-avatar" style='background-image: url("<%= typeof user !== 'undefined' && user.profile_img ? user.profile_img : 'https://i.pravatar.cc/150?img=1' %>");'></div>
                   <div style="position: absolute; bottom: 0; right: 0; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; pointer-events: none;">
                     <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">camera_alt</span>
                   </div>
