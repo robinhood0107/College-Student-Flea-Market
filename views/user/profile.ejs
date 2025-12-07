@@ -57,7 +57,14 @@
               <% if (typeof products !== 'undefined' && products.length > 0) { %>
                 <% products.forEach(product => { %>
                 <a href="/product/<%= product.id %>" class="user-product-card">
-                  <div class="user-product-image" style='background-image: url("<%= product.thumbnail || product.main_image || '/uploads/default.jpg' %>");'></div>
+                  <% if (product.thumbnail || product.main_image) { %>
+                  <div class="user-product-image" style='background-image: url("<%= product.thumbnail || product.main_image %>");'></div>
+                  <% } else { %>
+                  <div class="user-product-image user-product-image-placeholder">
+                    <span class="material-symbols-outlined">image</span>
+                    <p>이미지 없음</p>
+                  </div>
+                  <% } %>
                   <div class="user-product-info">
                     <p class="user-product-title"><%= product.title %></p>
                     <p class="user-product-price">₩<%= product.price.toLocaleString() %></p>

@@ -25,22 +25,26 @@
               <!-- 왼쪽: 상품 이미지 갤러리 -->
               <div class="image-gallery">
                 <div class="main-image-wrapper">
-                  <!-- 대표 이미지 -->
-                  <img 
-                    alt="<%= typeof product !== 'undefined' ? product.title : '상품 이미지' %>" 
-                    class="main-image" 
-                    src="<%= product.images && product.images[0] ? product.images[0].image_path : '/uploads/default.jpg' %>"
-                  />
-                  <!-- 이미지 인디케이터 -->
-                  <div class="image-indicators">
-                    <% if (typeof product !== 'undefined' && product.images && product.images.length > 0) { %>
+                  <% if (typeof product !== 'undefined' && product.images && product.images.length > 0) { %>
+                    <!-- 대표 이미지 -->
+                    <img 
+                      alt="<%= product.title %>" 
+                      class="main-image" 
+                      src="<%= product.images[0].image_path %>"
+                    />
+                    <!-- 이미지 인디케이터 -->
+                    <div class="image-indicators">
                       <% product.images.forEach((img, index) => { %>
-                      <div class="image-indicator <%= index === 0 ? 'image-indicator-active' : '' %>"></div>
+                        <div class="image-indicator <%= index === 0 ? 'image-indicator-active' : '' %>"></div>
                       <% }); %>
-                    <% } else { %>
-                      <div class="image-indicator image-indicator-active"></div>
-                    <% } %>
-                  </div>
+                    </div>
+                  <% } else { %>
+                    <!-- 이미지 없음 placeholder -->
+                    <div class="main-image-placeholder">
+                      <span class="material-symbols-outlined">image</span>
+                      <p>이미지 없음</p>
+                    </div>
+                  <% } %>
                 </div>
               </div>
               

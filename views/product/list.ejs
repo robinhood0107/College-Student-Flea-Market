@@ -76,7 +76,14 @@
                 <a href="/product/<%= product.id %>" class="product-card-link">
                   <div class="product-image-wrapper">
                     <!-- 상품 이미지 -->
-                    <div class="product-image" style='background-image: url("<%= product.thumbnail || '/uploads/default.jpg' %>");'></div>
+                    <% if (product.thumbnail) { %>
+                    <div class="product-image" style='background-image: url("<%= product.thumbnail %>");'></div>
+                    <% } else { %>
+                    <div class="product-image product-image-placeholder">
+                      <span class="material-symbols-outlined">image</span>
+                      <p>이미지 없음</p>
+                    </div>
+                    <% } %>
                     <!-- 상품 상태 뱃지 -->
                     <span class="product-status-badge 
                           <%= product.status === 'FOR_SALE' 
