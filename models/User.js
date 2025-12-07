@@ -118,6 +118,28 @@ const User = {
             [limit, offset]
         );
         return rows;
+    },
+
+    /**
+     * 전체 회원 수 조회
+     * 반환값으로 {Promise<number>} 전체 회원 수
+     */
+    async countAll() {
+        const [result] = await db.query(
+            'SELECT COUNT(*) as count FROM users'
+        );
+        return result[0]?.count || 0;
+    },
+
+    /**
+     * 오늘 가입한 회원 수 조회
+     * 반환값으로 {Promise<number>} 오늘 가입한 회원 수
+     */
+    async countToday() {
+        const [result] = await db.query(
+            'SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()'
+        );
+        return result[0]?.count || 0;
     }
 };
 

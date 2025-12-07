@@ -288,6 +288,28 @@ const Product = {
             [userId]
         );
         return rows;
+    },
+
+    /**
+     * 전체 상품 수 조회
+     * 반환값으로 {Promise<number>} 전체 상품 수
+     */
+    async countAll() {
+        const [result] = await db.query(
+            'SELECT COUNT(*) as count FROM products'
+        );
+        return result[0]?.count || 0;
+    },
+
+    /**
+     * 오늘 등록된 상품 수 조회
+     * 반환값으로 {Promise<number>} 오늘 등록된 상품 수
+     */
+    async countToday() {
+        const [result] = await db.query(
+            'SELECT COUNT(*) as count FROM products WHERE DATE(created_at) = CURDATE()'
+        );
+        return result[0]?.count || 0;
     }
 };
 
