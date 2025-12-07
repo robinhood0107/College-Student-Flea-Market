@@ -309,7 +309,7 @@
       Utils.showNotification('상품 ID 또는 상태가 없습니다.', 'error');
       return;
     }
-    
+
     try {
       const response = await fetch(`/product/${productId}/status`, {
         method: 'POST',
@@ -319,12 +319,11 @@
         body: `product-status=${encodeURIComponent(status)}`,
         credentials: 'same-origin'
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         Utils.showNotification('상품 상태가 변경되었습니다.', 'success');
-        
-        // 상태 뱃지 업데이트
+
         const statusBadge = document.querySelector('.product-status-badge');
         if (statusBadge) {
           statusBadge.textContent = data.status || status;
@@ -385,8 +384,8 @@
     }
     
     try {
-      const response = await fetch(`/product/${productId}/delete`, {
-        method: 'POST',
+      const response = await fetch(`/product/${productId}`, {
+        method: 'DELETE',
         credentials: 'same-origin'
       });
       
@@ -472,6 +471,44 @@
   // 페이지 로드 시 갤러리 초기화
   document.addEventListener('DOMContentLoaded', initImageGallery);
 })();
+
+// 정렬 버튼 기능
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const sortBtn = document.querySelector('.sort-btn');
+    const sortDropdown = document.getElementById('sort-dropdown');
+
+    if (!sortBtn || !sortDropdown) return;
+
+    sortBtn.addEventListener('click', () => {
+      sortDropdown.classList.toggle('active');
+    });
+
+    const options = sortDropdown.querySelectorAll('.sort-option');
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        const sortValue = option.dataset.sort;
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', sortValue);
+        window.location.href = url.toString();
+      });
+    });
+
+    // 바깥 클릭하면 닫기
+    document.addEventListener('click', (e) => {
+      if (!sortBtn.contains(e.target) && !sortDropdown.contains(e.target)) {
+        sortDropdown.classList.remove('active');
+      }
+    });
+  });
+})();
+
+
+
+
 
 // 댓글 및 대댓글 기능
 // ⚠️ 백엔드 구현 필요:
@@ -682,3 +719,40 @@
   }
 })();
 
+// 정렬 드롭다운 기능
+document.addEventListener("DOMContentLoaded", () => {
+  const sortBtn = document.getElementById("sort-btn");
+  const sortDropdown = document.getElementById("sort-dropdown");
+  const sortOptions = document.querySelectorAll(".sort-option");
+  const sortLabel = document.getElementById("sort-label");
+
+  if (!sortBtn || !sortDropdown || !sortLabel) return;
+
+  // ▼ 드롭다운 열기/닫기
+  sortBtn.addEventListener("click", () => {
+    sortDropdown.classList.toggle("hidden");
+  });
+
+  // ▼ 옵션 선택
+  sortOptions.forEach(option => {
+    option.addEventListener("click", () => {
+      const sortValue = option.dataset.sort;
+      const sortText = option.textContent;
+
+      // 버튼 텍스트 변경
+      sortLabel.textContent = sortText;
+
+      // 새 정렬값으로 페이지 이동
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort', sortValue);
+      window.location.href = url.toString();
+    });
+  });
+
+  // ▼ 드롭다운 바깥 클릭하면 닫기
+  document.addEventListener("click", (event) => {
+    if (!sortBtn.contains(event.target) && !sortDropdown.contains(event.target)) {
+      sortDropdown.classList.add("hidden");
+    }
+  });
+});

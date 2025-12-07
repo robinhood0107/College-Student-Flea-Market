@@ -16,8 +16,8 @@ const Product = {
      * 파라미터로 {Object} filters - 필터 옵션 { category?, keyword?, status?, limit?, offset? }
      * 반환값으로 {Promise<Array>} 상품 배열 (이미지 포함)
      */
-async findAll(filters = {}, userId = null) {
-        const { category, keyword, status, limit = 20, offset = 0 } = filters;
+    async findAll(filters = {}, userId = null) {
+        const { category, keyword, status, sort, limit = 20, offset = 0 } = filters;
 
         let query = `
             SELECT 
@@ -37,32 +37,39 @@ async findAll(filters = {}, userId = null) {
             FROM products p
             LEFT JOIN users u ON p.seller_id = u.id
             WHERE 1=1
-        `;      
+        `;
+
         const params = [];
-        // userId가 존재할 경우, SELECT 부분의 첫 번째 ? 를 채움
-        if (userId) {
-            params.push(userId);
-        }
-        // 동적 WHERE 절 생성 (SQL Injection 방지)
+        if (userId) params.push(userId);
+
+        // 필터들
         if (category) {
-            query += ' AND p.category = ?';
+            query += ` AND p.category = ?`;
             params.push(category);
         }
+
         if (keyword) {
-            // Full-Text 인덱스 사용 (MATCH ... AGAINST)
-            // IN BOOLEAN MODE: AND, OR, +, - 등 연산자 사용 가능
-            // 예: '맥북 -중고' (맥북은 포함, 중고는 제외)
-            query += ' AND (p.title LIKE ? OR p.description LIKE ?)';
+            query += ` AND (p.title LIKE ? OR p.description LIKE ?)`;
             params.push(`%${keyword}%`, `%${keyword}%`);
         }
+
         if (status) {
-            query += ' AND p.status = ?';
+            query += ` AND p.status = ?`;
             params.push(status);
         }
-        
-        query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
+
+        // 🔥🔥 정렬 적용
+        if (sort === 'price_low') {
+            query += ` ORDER BY p.price ASC`;
+        } else if (sort === 'price_high') {
+            query += ` ORDER BY p.price DESC`;
+        } else {
+            query += ` ORDER BY p.created_at DESC`; // 기본값 최신순
+        }
+
+        query += ` LIMIT ? OFFSET ?`;
         params.push(limit, offset);
-        
+
         const [rows] = await db.query(query, params);
         return rows;
     },

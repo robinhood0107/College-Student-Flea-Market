@@ -10,14 +10,12 @@ const categoryMap = {
     "Clothing": "의류"
 };
 
-
-
 /**
  * 상품 목록 조회
  */
 exports.list = async (req, res) => {
     try {
-        let { category, keyword, status, page = 1 } = req.query;
+        let { category, keyword, status, page = 1, sort } = req.query;
 
         // 영어 카테고리 → 한글로 매핑
         if (category && categoryMap[category]) {
@@ -27,15 +25,28 @@ exports.list = async (req, res) => {
         const limit = 20;
         const offset = (page - 1) * limit;
 
-        const products = await Product.findAll({
-            category,
-            keyword,
-            status,
-            limit,
-            offset
-        }, req.user ? req.user.id : null);
+        const products = await Product.findAll(
+            {
+                category,
+                keyword,
+                status,
+                sort,   // ★ 추가됨!
+                limit,
+                offset
+            },
+            req.user ? req.user.id : null
+        );
 
-        return res.render('product/list', { products, category, keyword, status, page, user: req.user || null });
+        return res.render('product/list', { 
+            products, 
+            category, 
+            keyword, 
+            status, 
+            sort,      // ★ 넘겨줘야 EJS에서 활성화 표시 가능
+            page, 
+            user: req.user || null 
+        });
+
     } catch (error) {
         console.error(error);
         return res.status(500).send("상품 목록 오류");
@@ -198,20 +209,53 @@ exports.detail = async (req, res) => {
             return res.status(404).send("상품을 찾을 수 없습니다.");
         }
 
-        // 판매자 정보
         const seller = await User.findById(product.seller_id);
+
+        // 댓글 전체 조회
+        let rawComments = await Comment.findByProductId(id);
+
+        // user 정보 매핑
+        rawComments = rawComments.map(c => ({
+            ...c,
+            user: {
+                id: c.user_id,
+                nickname: c.user_nickname,
+                profile_img: c.user_profile_img
+            },
+            replies: []   // replies 기본 생성!
+        }));
+
+        // parent-child 트리 구조 만들기
+        const commentMap = {};
+        rawComments.forEach(c => {
+            commentMap[c.id] = c;
+        });
+
+        const topLevelComments = [];
+
+        rawComments.forEach(c => {
+            if (c.parent_id === null) {
+                topLevelComments.push(c);
+            } else {
+                if (commentMap[c.parent_id]) {
+                    commentMap[c.parent_id].replies.push(c);
+                }
+            }
+        });
 
         return res.render('product/detail', {
             product,
             seller: seller || null,
             user: req.user || null,
-            comments: []
+            comments: topLevelComments  // ← 트리 구조 넘김
         });
+
     } catch (error) {
         console.error("상품 상세 조회 오류:", error);
         return res.status(500).send("상품 상세 조회 중 오류가 발생했습니다.");
     }
 };
+
 
 exports.toggleLike = async (req, res) => {
     try {
@@ -255,15 +299,19 @@ exports.updateStatus = async (req, res) => {
         }
 
         const productId = req.params.id;
-        const newStatus = req.body['product-status'] || req.body.status;// 클라이언트에서 status로 보냄
+        let newStatus = req.body['product-status'] || req.body.status;
 
-        // 상태 값 유효성 검증
-        const validStatuses = ['FOR_SALE', 'RESERVED', 'SOLD'];
+        // SOLD → SOLD_OUT 자동 변환
+        if (newStatus === 'SOLD') {
+            newStatus = 'SOLD_OUT';
+        }
+
+        // DB ENUM에 맞춤
+        const validStatuses = ['FOR_SALE', 'RESERVED', 'SOLD_OUT'];
         if (!newStatus || !validStatuses.includes(newStatus)) {
             return res.status(400).json({ success: false, message: "유효하지 않은 상태 값입니다." });
         }
 
-        // 판매자 본인 확인 (보안)
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({ success: false, message: "상품을 찾을 수 없습니다." });
@@ -273,16 +321,160 @@ exports.updateStatus = async (req, res) => {
             return res.status(403).json({ success: false, message: "권한이 없습니다." });
         }
 
-        // 상태 업데이트
         await Product.update(productId, { status: newStatus });
 
-        return res.json({
+        return res.json({ 
             success: true,
-            status: newStatus
+            status: newStatus 
         });
 
     } catch (error) {
         console.error("상태 변경 오류:", error);
         return res.status(500).json({ success: false, message: "상태 변경 중 오류 발생" });
+    }
+};
+
+const Comment = require('../models/Comment');  // 추가!
+
+/**
+ * 댓글 작성
+ */
+exports.createComment = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).redirect('/auth/login');
+        }
+
+        const productId = req.params.id;
+        const userId = req.user.id;
+        const content = req.body.content?.trim();
+
+        if (!content) {
+            return res.status(400).send("댓글 내용을 입력하세요.");
+        }
+
+        await Comment.createComment(productId, userId, content);
+
+        return res.redirect(`/product/${productId}`);
+    } catch (error) {
+        console.error("댓글 작성 오류:", error);
+        return res.status(500).send("댓글 작성 중 오류 발생");
+    }
+};
+
+/**
+ * 대댓글 작성
+ */
+exports.createReply = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).redirect('/auth/login');
+        }
+
+        const productId = req.params.id;
+        const parentId = req.params.commentId;
+        const userId = req.user.id;
+        const content = req.body.content?.trim();
+
+        if (!content) {
+            return res.status(400).send("답글 내용을 입력하세요.");
+        }
+
+        await Comment.createReply(productId, userId, content, parentId);
+
+        return res.redirect(`/product/${productId}`);
+    } catch (error) {
+        console.error("대댓글 작성 오류:", error);
+        return res.status(500).send("대댓글 작성 중 오류 발생");
+    }
+};
+
+/**
+ * 댓글/대댓글 삭제
+ */
+exports.deleteComment = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const commentId = req.params.commentId;
+
+        // 댓글 작성자만 삭제 가능
+        const deleted = await Comment.delete(commentId, req.user.id);
+
+        if (!deleted) {
+            return res.status(403).json({ success: false, message: "권한이 없습니다." });
+        }
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error("댓글 삭제 오류:", error);
+        return res.status(500).json({ success: false });
+    }
+};
+
+
+/**
+ * 상품 삭제
+ */
+exports.delete = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: "로그인이 필요합니다." });
+        }
+
+        const productId = req.params.id;
+
+        // 상품 조회
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "상품을 찾을 수 없습니다." });
+        }
+
+        // 판매자 본인 여부 확인
+        if (product.seller_id !== req.user.id) {
+            return res.status(403).json({ success: false, message: "권한이 없습니다." });
+        }
+
+        // 삭제 실행
+        await Product.delete(productId);
+
+        return res.json({ success: true });
+
+    } catch (error) {
+        console.error("상품 삭제 오류:", error);
+        return res.status(500).json({ success: false, message: "삭제 중 오류 발생" });
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: "로그인이 필요합니다." });
+        }
+
+        const id = req.params.id;
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "상품을 찾을 수 없습니다." });
+        }
+
+        if (product.seller_id !== req.user.id) {
+            return res.status(403).json({ success: false, message: "권한이 없습니다." });
+        }
+
+        // 🔥 삭제 순서가 매우 중요함
+        await db.query('DELETE FROM product_images WHERE product_id = ?', [id]);
+        await db.query('DELETE FROM likes WHERE product_id = ?', [id]);
+        await db.query('DELETE FROM comments WHERE product_id = ?', [id]);
+
+        const deleted = await Product.delete(id);
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error("상품 삭제 오류:", error);
+        return res.status(500).json({ success: false, message: "서버 오류" });
     }
 };

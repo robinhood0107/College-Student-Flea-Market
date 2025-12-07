@@ -67,3 +67,26 @@ CREATE TABLE sessions (
     data MEDIUMTEXT COLLATE utf8mb4_bin,
     PRIMARY KEY (session_id)
 ) ENGINE=InnoDB;
+
+-- 댓글 테이블 생성 (comment / reply)
+ 
+CREATE TABLE comments (
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '댓글 고유 ID',
+    product_id INT NOT NULL COMMENT '상품 ID (FK)',
+    user_id INT NOT NULL COMMENT '댓글 작성자 ID (FK)',
+    content TEXT NOT NULL COMMENT '댓글 내용',
+    parent_id INT DEFAULT NULL COMMENT '부모 댓글 ID (NULL이면 일반 댓글)',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '작성일',
+
+    -- 상품 삭제 시 댓글 자동 삭제
+    CONSTRAINT fk_comments_product FOREIGN KEY (product_id)
+        REFERENCES products(id) ON DELETE CASCADE,
+
+    -- 사용자 삭제 시 댓글 자동 삭제
+    CONSTRAINT fk_comments_user FOREIGN KEY (user_id)
+        REFERENCES users(id) ON DELETE CASCADE,
+
+    -- 대댓글 관계
+    CONSTRAINT fk_comments_parent FOREIGN KEY (parent_id)
+        REFERENCES comments(id) ON DELETE CASCADE
+);

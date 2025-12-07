@@ -47,12 +47,25 @@
           </div>
           <!-- 정렬 버튼 -->
           <div class="sort-section">
-            <div class="relative">
-              <button class="sort-btn">
+            <div class="sort-wrapper">
+              <button class="sort-btn" id="sort-btn">
                 <span class="material-symbols-outlined text-lg">sort</span>
-                <p class="text-main text-sm font-medium leading-normal">Latest</p>
+
+                <!-- 정렬 텍스트 표시 -->
+                <p class="text-main text-sm font-medium leading-normal" id="sort-label">
+                  <%= sort === 'price_low' ? 'Price Low'
+                      : sort === 'price_high' ? 'Price High'
+                      : 'Latest' %>
+                </p>
+
                 <span class="material-symbols-outlined text-lg">expand_more</span>
               </button>
+
+              <div class="sort-dropdown hidden" id="sort-dropdown">
+                <button class="sort-option" data-sort="latest">최신순</button>
+                <button class="sort-option" data-sort="price_low">가격 낮은순</button>
+                <button class="sort-option" data-sort="price_high">가격 높은순</button>
+              </div>
             </div>
           </div>
           <!-- 상품 그리드 -->

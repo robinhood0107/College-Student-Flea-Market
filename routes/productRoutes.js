@@ -4,6 +4,8 @@ const productController = require('../controllers/productController');
 const upload = require('../middlewares/upload');
 
  
+// POST /product/:id/status - 상품 상태 변경
+router.post('/:id/status', productController.updateStatus);
 
 // GET /product/list - 상품 목록 페이지
 router.get('/list', productController.list || ((req, res) => {
@@ -29,18 +31,15 @@ router.post('/:id/edit', upload.single('image'), productController.update || ((r
     res.redirect(`/product/${req.params.id}`);
 }));
 
-// POST /product/:id/status - 상품 상태 변경
-router.post('/:id/status', productController.updateStatus);
 
 // POST /product/:id/comment - 댓글 작성
-router.post('/:id/comment', productController.createComment || ((req, res) => {
-    res.redirect(`/product/${req.params.id}`);
-}));
+router.post('/:id/comment', productController.createComment);
 
 // POST /product/:id/comment/:commentId/reply - 답글 작성
-router.post('/:id/comment/:commentId/reply', productController.createReply || ((req, res) => {
-    res.redirect(`/product/${req.params.id}`);
-}));
+router.post('/:id/comment/:commentId/reply', productController.createReply);
+
+// DELETE /product/:id/comment/:commentId 댓글 삭제
+router.delete('/comment/:commentId', productController.deleteComment);
 
 // POST /product/:id/like - 찜하기
 router.post('/:id/like', productController.toggleLike || ((req, res) => {
@@ -48,9 +47,7 @@ router.post('/:id/like', productController.toggleLike || ((req, res) => {
 }));
 
 // DELETE /product/:id - 상품 삭제
-router.delete('/:id', productController.delete || ((req, res) => {
-    res.redirect('/product/list');
-}));
+router.delete('/:id', productController.deleteProduct);
 
 // GET /product/:id - 상품 상세 페이지 (가장 마지막에 위치 - 다른 라우트와 충돌 방지)
 router.get('/:id', productController.detail || ((req, res) => {
@@ -59,5 +56,6 @@ router.get('/:id', productController.detail || ((req, res) => {
         comments: []
     });
 }));
+
 
 module.exports = router;

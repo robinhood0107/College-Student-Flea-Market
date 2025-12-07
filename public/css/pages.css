@@ -1866,3 +1866,91 @@
   font-size: var(--font-size-base);
 }
 
+/* ============================
+   SORT SECTION (정렬 dropdown)
+   ============================ */
+
+.sort-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-4);
+}
+
+/* 버튼 + 드롭다운 묶는 래퍼 */
+.sort-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* 정렬 버튼 */
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  background-color: var(--color-bg-slate-100);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border-slate-300);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: var(--font-size-sm);
+}
+
+.sort-btn:hover {
+  background-color: var(--color-bg-slate-200);
+}
+
+.dark .sort-btn {
+  background-color: var(--color-bg-slate-800);
+  border-color: var(--color-border-slate-700);
+}
+
+.dark .sort-btn:hover {
+  background-color: var(--color-bg-slate-700);
+}
+
+/* 드롭다운 */
+.sort-dropdown {
+  position: absolute;
+  top: calc(100% + 6px); /* 버튼 아래 간격 */
+  right: 0;
+  min-width: 150px;
+  background-color: var(--color-bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-main);
+  padding: var(--spacing-1) 0;
+  z-index: 50;
+  display: none;
+}
+
+.sort-dropdown.active {
+  display: block;
+}
+
+.dark .sort-dropdown {
+  background-color: var(--color-bg-slate-900);
+  border-color: var(--color-border-slate-700);
+}
+
+/* 드롭다운 옵션 */
+.sort-option {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.sort-option:hover {
+  background-color: var(--color-bg-slate-100);
+}
+
+.dark .sort-option:hover {
+  background-color: var(--color-bg-slate-800);
+}

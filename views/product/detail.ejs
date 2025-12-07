@@ -109,8 +109,8 @@
                         class="sr-only" 
                         name="product-status" 
                         type="radio" 
-                        value="SOLD_OUT" 
-                        <%= product.status === 'SOLD_OUT' ? 'checked' : '' %> 
+                        value="SOLD" 
+                        <%= product.status === 'SOLD' ? 'checked' : '' %> 
                       />
                       <span class="truncate">판매완료</span>
                     </label>
@@ -136,7 +136,7 @@
                         <button class="like-button" data-like-product="<%= product.id %>" type="button">
                           <span class="material-symbols-outlined">favorite_border</span>
                         </button>
-                        <span class="like-count"><%= product.like_count %></span>
+                         
                       </div>
                     <% } %>
                     <!-- 로그인하지 않은 사용자는 찜 개수만 표시 -->
@@ -233,7 +233,7 @@
                           </div>
                         </div>
                       </div>
-                    </form>
+                    </form> 
                     <% } %>
                     
                     <!-- 대댓글 목록 -->
@@ -242,7 +242,7 @@
                       <% comment.replies.forEach(reply => { %>
                       <div class="reply-item" data-reply-id="<%= reply.id %>">
                         <div class="comment-content">
-                          <div class="comment-user-avatar" style='background-image: url("<%= reply.user && reply.user.profile_img ? reply.user.profile_img : '/uploads/default.jpg' %>");'></div>
+                           <div class="comment-user-avatar" style='background-image: url("<%= reply.user && reply.user.profile_img ? reply.user.profile_img : '/uploads/default.jpg' %>");'></div>
                           <div class="comment-body">
                             <div class="comment-header">
                               <span class="comment-author"><%= reply.user ? reply.user.nickname : '익명' %></span>
