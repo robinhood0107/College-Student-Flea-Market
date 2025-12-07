@@ -158,7 +158,6 @@ app.use((err, req, res, next) => {
 module.exports = app;
 
 
-// 직접 실행 시에만 서버 시작 (require('./app')로 로드될 때는 실행 안 됨)
 if (require.main === module) {
   const port = process.env.PORT || 3000;
   
@@ -170,8 +169,7 @@ if (require.main === module) {
     console.error('Uncaught Exception:', err);
     process.exit(1); // 비정상 종료시킴
   });
-  
-  // unhandledRejection: 동기 예외 (try/catch 미사용)
+
   process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
     process.exit(1); // 비정상 종료시킴

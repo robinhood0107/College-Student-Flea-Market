@@ -225,7 +225,7 @@ exports.detail = async (req, res) => {
             replies: []   // replies 기본 생성!
         }));
 
-        // parent-child 트리 구조 만들기
+        // parent-child 트리 구조 만들기 (재귀적 지원)
         const commentMap = {};
         rawComments.forEach(c => {
             commentMap[c.id] = c;
@@ -233,6 +233,7 @@ exports.detail = async (req, res) => {
 
         const topLevelComments = [];
 
+        // 모든 댓글을 부모의 replies에 추가 (재귀적으로 처리)
         rawComments.forEach(c => {
             if (c.parent_id === null) {
                 topLevelComments.push(c);
@@ -355,7 +356,7 @@ exports.createComment = async (req, res) => {
 
         await Comment.createComment(productId, userId, content);
 
-        return res.redirect(`/product/${productId}`);
+        return res.redirect(303, `/product/${productId}`);
     } catch (error) {
         console.error("댓글 작성 오류:", error);
         return res.status(500).send("댓글 작성 중 오류 발생");
@@ -382,7 +383,7 @@ exports.createReply = async (req, res) => {
 
         await Comment.createReply(productId, userId, content, parentId);
 
-        return res.redirect(`/product/${productId}`);
+        return res.redirect(303, `/product/${productId}`);
     } catch (error) {
         console.error("대댓글 작성 오류:", error);
         return res.status(500).send("대댓글 작성 중 오류 발생");

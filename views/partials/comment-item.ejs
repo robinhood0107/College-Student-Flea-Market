@@ -1,0 +1,59 @@
+<% 
+// 댓글 아이템을 재귀적으로 렌더링하는 partial
+// commentItem: 댓글 객체
+// product: 상품 객체
+// user: 현재 사용자
+%>
+<div class="<%= commentItem.parent_id ? 'reply-item' : 'comment-item' %>" data-comment-id="<%= commentItem.id %>" <% if (commentItem.parent_id) { %>data-reply-id="<%= commentItem.id %>"<% } %>>
+  <div class="comment-content">
+    <div class="comment-user-avatar" style='background-image: url("<%= commentItem.user && commentItem.user.profile_img ? commentItem.user.profile_img : '/uploads/default.jpg' %>");'></div>
+    <div class="comment-body">
+      <div class="comment-header">
+        <span class="comment-author"><%= commentItem.user ? commentItem.user.nickname : '익명' %></span>
+        <span class="comment-time"><%= commentItem.created_at || '방금 전' %></span>
+      </div>
+      <p class="comment-text"><%= commentItem.content %></p>
+      <div class="comment-actions">
+        <% if (typeof user !== 'undefined' && user) { %>
+        <button class="comment-reply-btn" data-comment-id="<%= commentItem.id %>">답글</button>
+        <% if (user.id === commentItem.user_id) { %>
+        <button class="comment-delete-btn" data-comment-id="<%= commentItem.id %>" <% if (commentItem.parent_id) { %>data-reply-id="<%= commentItem.id %>"<% } %>>삭제</button>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 대댓글 작성 폼 (숨김) -->
+  <% if (typeof user !== 'undefined' && user) { %>
+  <form class="reply-form" data-parent-id="<%= commentItem.id %>" style="display: none;" action="/product/<%= typeof product !== 'undefined' ? product.id : '' %>/comment/<%= commentItem.id %>/reply" method="POST">
+    <div class="reply-form-content">
+      <div class="comment-user-avatar" style='background-image: url("<%= user.profile_img || '/uploads/default.jpg' %>");'></div>
+      <div class="comment-input-wrapper">
+        <textarea 
+          class="comment-input" 
+          name="content" 
+          placeholder="답글을 입력하세요..." 
+          rows="2" 
+          autocomplete="off"
+          required
+        ></textarea>
+        <div class="comment-form-actions">
+          <button type="button" class="comment-cancel-btn" data-parent-id="<%= commentItem.id %>">취소</button>
+          <button type="submit" class="comment-submit-btn">등록</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  <% } %>
+  
+  <!-- 대댓글 목록 (재귀적 렌더링) -->
+  <% if (commentItem.replies && commentItem.replies.length > 0) { %>
+  <div class="replies-list">
+    <% commentItem.replies.forEach(reply => { %>
+    <%- include('comment-item', { commentItem: reply, product: product, user: user }) %>
+    <% }); %>
+  </div>
+  <% } %>
+</div>
+

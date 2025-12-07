@@ -531,48 +531,131 @@
   /**
    * 답글 버튼 클릭 핸들러
    * (프론트엔드 전용 - UI 제어만 담당)
+   * 이벤트 위임을 사용하여 동적으로 추가된 버튼도 처리
    */
   function initReplyButtons() {
-    const replyButtons = document.querySelectorAll('.comment-reply-btn');
-    replyButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const commentId = this.getAttribute('data-comment-id');
-        const replyForm = document.querySelector(`.reply-form[data-parent-id="${commentId}"]`);
-        
-        if (replyForm) {
-          const isVisible = replyForm.style.display !== 'none';
-          replyForm.style.display = isVisible ? 'none' : 'flex';
+    // 이벤트 위임: 댓글 섹션에 이벤트 리스너를 추가하여 모든 답글 버튼 처리
+    const commentsSection = document.querySelector('.comments-section');
+    if (commentsSection) {
+      commentsSection.addEventListener('click', function(e) {
+        if (e.target.classList.contains('comment-reply-btn')) {
+          const commentId = e.target.getAttribute('data-comment-id');
+          const replyForm = document.querySelector(`.reply-form[data-parent-id="${commentId}"]`);
           
-          if (!isVisible) {
-            const textarea = replyForm.querySelector('textarea');
-            if (textarea) {
-              textarea.focus();
+          if (replyForm) {
+            const isVisible = replyForm.style.display !== 'none';
+            replyForm.style.display = isVisible ? 'none' : 'flex';
+            
+            if (!isVisible) {
+              const textarea = replyForm.querySelector('textarea');
+              if (textarea) {
+                textarea.focus();
+              }
             }
           }
         }
       });
+    }
+    
+    // 기존 버튼들도 처리 (하위 호환성)
+    const replyButtons = document.querySelectorAll('.comment-reply-btn');
+    replyButtons.forEach(button => {
+      // 이미 이벤트 위임으로 처리되므로 중복 방지
+      if (!button.hasAttribute('data-reply-handled')) {
+        button.setAttribute('data-reply-handled', 'true');
+      }
     });
   }
   
   /**
    * 답글 취소 버튼 핸들러
    * (프론트엔드 전용 - UI 제어만 담당)
+   * 이벤트 위임을 사용하여 동적으로 추가된 버튼도 처리
    */
   function initCancelButtons() {
-    const cancelButtons = document.querySelectorAll('.comment-cancel-btn');
-    cancelButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const parentId = this.getAttribute('data-parent-id');
-        const replyForm = document.querySelector(`.reply-form[data-parent-id="${parentId}"]`);
-        
-        if (replyForm) {
-          replyForm.style.display = 'none';
-          const textarea = replyForm.querySelector('textarea');
-          if (textarea) {
-            textarea.value = '';
+    // 이벤트 위임: 댓글 섹션에 이벤트 리스너를 추가하여 모든 취소 버튼 처리
+    const commentsSection = document.querySelector('.comments-section');
+    if (commentsSection) {
+      commentsSection.addEventListener('click', function(e) {
+        if (e.target.classList.contains('comment-cancel-btn')) {
+          const parentId = e.target.getAttribute('data-parent-id');
+          const replyForm = document.querySelector(`.reply-form[data-parent-id="${parentId}"]`);
+          
+          if (replyForm) {
+            replyForm.style.display = 'none';
+            const textarea = replyForm.querySelector('textarea');
+            if (textarea) {
+              textarea.value = '';
+            }
           }
         }
       });
+    }
+    
+    // 기존 버튼들도 처리 (하위 호환성)
+    const cancelButtons = document.querySelectorAll('.comment-cancel-btn');
+    cancelButtons.forEach(button => {
+      // 이미 이벤트 위임으로 처리되므로 중복 방지
+      if (!button.hasAttribute('data-cancel-handled')) {
+        button.setAttribute('data-cancel-handled', 'true');
+      }
+    });
+  }
+  
+  /**
+   * 댓글 폼 제출 핸들러
+   * 폼 제출 후 입력 필드를 초기화하여 뒤로가기 시 텍스트가 남지 않도록 함
+   */
+  function initCommentForms() {
+    // 댓글 작성 폼
+    const commentForm = document.querySelector('.comment-form');
+    if (commentForm) {
+      commentForm.addEventListener('submit', function() {
+        const textarea = this.querySelector('textarea[name="content"]');
+        if (textarea) {
+          // 제출 후 약간의 지연을 두고 폼 초기화 (서버 응답 전에 초기화)
+          setTimeout(() => {
+            textarea.value = '';
+          }, 100);
+        }
+      });
+    }
+    
+    // 대댓글 작성 폼들
+    const replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(form => {
+      form.addEventListener('submit', function() {
+        const textarea = this.querySelector('textarea[name="content"]');
+        if (textarea) {
+          // 제출 후 약간의 지연을 두고 폼 초기화
+          setTimeout(() => {
+            textarea.value = '';
+            this.style.display = 'none';
+          }, 100);
+        }
+      });
+    });
+  }
+  
+  /**
+   * 페이지 로드 시 폼 초기화
+   * 브라우저 뒤로가기 시 폼 데이터가 복원되는 것을 방지
+   */
+  function clearCommentForms() {
+    const commentForm = document.querySelector('.comment-form');
+    if (commentForm) {
+      const textarea = commentForm.querySelector('textarea[name="content"]');
+      if (textarea) {
+        textarea.value = '';
+      }
+    }
+    
+    const replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(form => {
+      const textarea = form.querySelector('textarea[name="content"]');
+      if (textarea) {
+        textarea.value = '';
+      }
     });
   }
   
@@ -700,6 +783,8 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       if (document.querySelector('.comments-section')) {
+        clearCommentForms();
+        initCommentForms();
         initReplyButtons();
         initCancelButtons();
         initDeleteButtons();
@@ -710,6 +795,8 @@
   } else {
     // 이미 로드된 경우 즉시 실행
     if (document.querySelector('.comments-section')) {
+      clearCommentForms();
+      initCommentForms();
       initReplyButtons();
       initCancelButtons();
       initDeleteButtons();
@@ -717,6 +804,14 @@
       observeNewComments();
     }
   }
+  
+  // 페이지 로드/뒤로가기 시 폼 초기화
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (performance.navigation && performance.navigation.type === 2)) {
+      // 뒤로가기로 페이지가 로드된 경우
+      clearCommentForms();
+    }
+  });
 })();
 
 // 정렬 드롭다운 기능
