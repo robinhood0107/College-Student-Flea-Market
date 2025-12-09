@@ -1,6 +1,10 @@
 # College-Student-Flea-Market
 College-Student-Flea-Market
 
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
+
 ### env 설정법
 
 NODE_ENV = (production, development 모드 중 선택)
