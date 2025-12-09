@@ -26,22 +26,21 @@ INSERT INTO products (seller_id, title, price, category, description, location, 
 (6, '노트북 가방', 30000, '의류', '노트북 가방입니다. 깨끗하게 사용했습니다.', '부산대학교 근처', 'SOLD_OUT', '2025-11-25 14:00:00'),
 (6, '무선 마우스', 20000, '디지털기기', '로지텍 무선 마우스입니다. 거의 새것입니다.', '부산대학교 정문', 'FOR_SALE', '2025-11-28 09:00:00');
 
--- 3. product_images 테이블 더미 데이터
+
+-- 3. product_images 테이블 더미 데이터 (상품당 이미지 1장 )
 INSERT INTO product_images (product_id, image_path) VALUES
-(1, 'https://picsum.photos/800/600?random=1'),
-(1, 'https://picsum.photos/800/600?random=2'),
-(1, 'https://picsum.photos/800/600?random=3'),
-(2, 'https://picsum.photos/800/600?random=4'),
-(3, 'https://picsum.photos/800/600?random=5'),
-(4, 'https://picsum.photos/800/600?random=6'),
-(4, 'https://picsum.photos/800/600?random=7'),
-(5, 'https://picsum.photos/800/600?random=8'),
-(5, 'https://picsum.photos/800/600?random=9'),
-(6, 'https://picsum.photos/800/600?random=10'),
-(7, 'https://picsum.photos/800/600?random=11'),
-(8, 'https://picsum.photos/800/600?random=11'),
-(9, 'https://picsum.photos/800/600?random=13'),
-(10, 'https://picsum.photos/800/600?random=14');
+(1, '/uploads/MacBook Pro.jpg'),
+(2, '/uploads/Economics Textbook.jpg'),
+(3, '/uploads/lamp.jpg'),
+(4, '/uploads/Wool Coat.jpg'),
+(5, '/uploads/Leather Boots.jpg'),
+(6, '/uploads/Cashmere Scarf.jpg'),
+(7, '/uploads/Wooden Desk.jpg'),
+(8, '/uploads/Chair.jpg'),
+(9, '/uploads/Laptop Bag.jpg'),
+(10, '/uploads/Wireless Mouse.jpg');
+
+
 
 -- 4. likes 테이블 더미 데이터 (찜하기)
 INSERT INTO likes (user_id, product_id, created_at) VALUES

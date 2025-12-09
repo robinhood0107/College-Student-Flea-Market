@@ -30,7 +30,7 @@ exports.list = async (req, res) => {
                 category,
                 keyword,
                 status,
-                sort,   // ★ 추가됨!
+                sort,   // 추가됨!
                 limit,
                 offset
             },
@@ -42,7 +42,7 @@ exports.list = async (req, res) => {
             category, 
             keyword, 
             status, 
-            sort,      // ★ 넘겨줘야 EJS에서 활성화 표시 가능
+            sort,      //  넘겨줘야 EJS에서 활성화 표시 가능
             page, 
             user: req.user || null 
         });
@@ -466,7 +466,7 @@ exports.deleteProduct = async (req, res) => {
             return res.status(403).json({ success: false, message: "권한이 없습니다." });
         }
 
-        // 🔥 삭제 순서가 매우 중요함
+        // 삭제 순서가 매우 중요함
         await db.query('DELETE FROM product_images WHERE product_id = ?', [id]);
         await db.query('DELETE FROM likes WHERE product_id = ?', [id]);
         await db.query('DELETE FROM comments WHERE product_id = ?', [id]);

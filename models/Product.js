@@ -58,7 +58,7 @@ const Product = {
             params.push(status);
         }
 
-        // 🔥🔥 정렬 적용
+        // 정렬 적용
         if (sort === 'price_low') {
             query += ` ORDER BY p.price ASC`;
         } else if (sort === 'price_high') {

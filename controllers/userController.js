@@ -33,35 +33,7 @@ const userController = {
                 products = await Product.findBySellerId(user.id);
             }
             
-
-
-
-
-
-
-
-
-
-
-
-
-            //여기서 Grid 나중에 라우터로 연결하면서 수정 필요
-            //(미완성)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
+ 
             res.render('user/profile', {
                 user: user,
                 products: products,
