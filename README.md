@@ -6,6 +6,26 @@ https://github.com/robinhood0107/College-Student-Flea-Market
 ## Collaborators
 
 <!-- readme: collaborators -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/gangje">
+                    <img src="https://avatars.githubusercontent.com/u/61902570?v=4" width="100;" alt="gangje"/>
+                    <br />
+                    <sub><b>gangje</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/robinhood0107">
+                    <img src="https://avatars.githubusercontent.com/u/82791582?v=4" width="100;" alt="robinhood0107"/>
+                    <br />
+                    <sub><b>robinhood0107</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: collaborators -end -->
 
 
