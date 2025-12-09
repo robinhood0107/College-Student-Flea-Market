@@ -31,7 +31,8 @@ https://github.com/robinhood0107/College-Student-Flea-Market
 
 ### env 설정법
 
-NODE_ENV = (production, development 모드 중 선택)
+NODE_ENV = development 
+(원한다면 production, development 모드 중 선택)
 
 PORT=3000
 
@@ -43,4 +44,7 @@ DB_PASSWORD= (비밀번호)
 
 DB_NAME=market_db
 
-SESSION_SECRET= (난수 생성 필요)
+SESSION_SECRET= (hex 32 난수 생성 필요)
+예시) 0b50605ca5737014ab4d74038053d949c3dac4a6c929e9b07b369f15f876fcf7
+
+openssl rand -hex 32를 사용
